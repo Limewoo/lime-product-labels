@@ -822,36 +822,6 @@ class Fields {
 						'schema'      => array( 'type' => 'string' ),
 					),
 					array(
-						'id'         => 'badge_radius',
-						'type'       => 'unit',
-						'slider'     => true,
-						'label'      => esc_html__( 'Corner radius', 'lime-product-labels' ),
-						'attributes' => array(
-							'min'   => 0,
-							'max'   => 999,
-							'step'  => 1,
-							'units' => array(
-								array(
-									'label' => 'px',
-									'value' => 'px',
-								),
-								array(
-									'label' => 'em',
-									'value' => 'em',
-								),
-								array(
-									'label' => 'rem',
-									'value' => 'rem',
-								),
-							),
-						),
-						'default'    => '4px',
-						'css_var'    => true,
-						'conditions' => $manual_condition,
-						'schema'     => array( 'type' => 'string' ),
-					),
-
-					array(
 						'id'         => 'badge_font_size',
 						'type'       => 'unit',
 						'slider'     => true,
@@ -875,7 +845,102 @@ class Fields {
 								),
 							),
 						),
-						'default'    => '11px',
+						'default'    => '14px',
+						'css_var'    => true,
+						'conditions' => $manual_condition,
+						'schema'     => array( 'type' => 'string' ),
+					),
+					array(
+						'id'         => 'badge_radius',
+						'type'       => 'unit',
+						'slider'     => true,
+						'label'      => esc_html__( 'Corner radius', 'lime-product-labels' ),
+						'attributes' => array(
+							'min'   => 0,
+							'max'   => 100,
+							'step'  => 1,
+							'units' => array(
+								array(
+									'label' => 'px',
+									'value' => 'px',
+								),
+								array(
+									'label' => 'em',
+									'value' => 'em',
+								),
+								array(
+									'label' => 'rem',
+									'value' => 'rem',
+								),
+							),
+						),
+						'default'    => '4px',
+						'css_var'    => true,
+						'conditions' => $manual_condition,
+						'schema'     => array( 'type' => 'string' ),
+					),
+					array(
+						'id'         => 'badge_width',
+						'type'       => 'unit',
+						'slider'     => true,
+						'label'      => esc_html__( 'Width', 'lime-product-labels' ),
+						'attributes' => array(
+							'min'   => 0,
+							'max'   => 300,
+							'step'  => 1,
+							'units' => array(
+								array(
+									'label' => 'px',
+									'value' => 'px',
+								),
+								array(
+									'label' => '%',
+									'value' => '%',
+								),
+								array(
+									'label' => 'em',
+									'value' => 'em',
+								),
+								array(
+									'label' => 'rem',
+									'value' => 'rem',
+								),
+							),
+						),
+						'default'    => '',
+						'css_var'    => true,
+						'conditions' => $manual_condition,
+						'schema'     => array( 'type' => 'string' ),
+					),
+					array(
+						'id'         => 'badge_height',
+						'type'       => 'unit',
+						'slider'     => true,
+						'label'      => esc_html__( 'Height', 'lime-product-labels' ),
+						'attributes' => array(
+							'min'   => 0,
+							'max'   => 200,
+							'step'  => 1,
+							'units' => array(
+								array(
+									'label' => 'px',
+									'value' => 'px',
+								),
+								array(
+									'label' => '%',
+									'value' => '%',
+								),
+								array(
+									'label' => 'em',
+									'value' => 'em',
+								),
+								array(
+									'label' => 'rem',
+									'value' => 'rem',
+								),
+							),
+						),
+						'default'    => '',
 						'css_var'    => true,
 						'conditions' => $manual_condition,
 						'schema'     => array( 'type' => 'string' ),
@@ -962,7 +1027,67 @@ class Fields {
 	 * @return array
 	 */
 	public static function get_settings_fields() {
-		$fields = array();
+		$fields = array(
+			array(
+				'section_id'  => 'export_import',
+				'title'       => esc_html__( 'Export & Import', 'lime-product-labels' ),
+				'description' => esc_html__( 'Back up your labels to a JSON file or restore them from a previous backup.', 'lime-product-labels' ),
+				'fields'      => array(
+					array(
+						'id'   => 'export_label',
+						'type' => 'note',
+						'label' => esc_html__( 'Export labels', 'lime-product-labels' ),
+						'desc'  => esc_html__( 'Download a backup of all your labels as a JSON file. Use this file to restore your labels on any site.', 'lime-product-labels' ),
+					),
+					array(
+						'id'      => 'export_btn',
+						'type'    => 'button',
+						'buttons' => array(
+							array(
+								'label' => esc_html__( 'Download', 'lime-product-labels' ),
+								'value' => 'export',
+							),
+						),
+					),
+					array(
+						'id'    => 'import_label',
+						'type'  => 'note',
+						'label' => esc_html__( 'Import labels', 'lime-product-labels' ),
+						'desc'  => esc_html__( 'Restore labels by uploading a previously exported JSON file. Existing labels with matching IDs will be overwritten.', 'lime-product-labels' ),
+					),
+					array(
+						'id'      => 'import_btn',
+						'type'    => 'button',
+						'file'    => true,
+						'buttons' => array(
+							array(
+								'label' => esc_html__( 'Restore', 'lime-product-labels' ),
+								'value' => 'import',
+								'type'  => 'file_input',
+							),
+						),
+					),
+				),
+			),
+
+			array(
+				'section_id'  => 'data_management',
+				'title'       => esc_html__( 'Data Management', 'lime-product-labels' ),
+				'description' => esc_html__( 'Warning: This action is irreversible and will permanently delete all data.', 'lime-product-labels' ),
+				'fields'      => array(
+					array(
+						'id'      => 'delete_data_on_uninstall',
+						'type'    => 'checkbox',
+						'label'   => esc_html__( 'Remove all data upon uninstall', 'lime-product-labels' ),
+						'desc'    => esc_html__( 'Check this box to permanently remove all Lime Product Labels, settings, and data when the plugin is uninstalled.', 'lime-product-labels' ),
+						'default' => false,
+						'schema'  => array(
+							'type' => 'boolean',
+						),
+					),
+				),
+			),
+		);
 
 		/**
 		 * Filter settings fields.

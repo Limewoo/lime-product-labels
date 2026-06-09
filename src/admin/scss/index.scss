@@ -258,15 +258,56 @@ img {
 				}
 			}
 		}
+
+		&--row {
+			.Polaris-ShadowBevel {
+				border-radius: 0;
+				box-shadow: none;
+
+				&:before {
+					content: none;
+				}
+
+				> .Polaris-Box {
+					background: none;
+				}
+			}
+
+			.lime-product-labels {
+				&__section-header {
+					border: none;
+
+					.Polaris-Box {
+						padding-block-start: 0;
+						padding-inline-start: 0;
+					}
+				}
+
+				&__fields {
+					.Polaris-Box {
+						border: 1px solid $border_color;
+						border-radius: $border_radius;
+						box-shadow: 0 1px $border_color;
+					}
+				}
+			}
+		}
 	}
 
 	&__tab {
-		&-styles {
+		&-styles,
+		&-settings {
 			.lime-product-labels__field--note {
 				.Polaris-Text--root {
 					font-size: 14px;
 					font-weight: 500;
 				}
+			}
+		}
+
+		&-settings {
+			.Polaris-Choice__Descriptions .Polaris-Text--root {
+				font-size: 12px;
 			}
 		}
 	}
@@ -375,6 +416,23 @@ img {
 			@media (min-width: $desktop-up) {
 				.Polaris-Labelled__LabelWrapper {
 					visibility: hidden;
+				}
+			}
+		}
+
+		&--dropzone {
+			.Polaris-Labelled--hidden,
+			.Polaris-DropZone--sizeSmall {
+				height: 100%;
+				min-height: 100%;
+			}
+
+			.Polaris-DropZone-FileUpload--small {
+				padding: 3px;
+
+				.Polaris-Icon {
+					width: 1.1rem;
+					height: 1.1rem;
 				}
 			}
 		}

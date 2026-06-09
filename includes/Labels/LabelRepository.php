@@ -297,6 +297,67 @@ class LabelRepository {
 	}
 
 	/**
+	 * Import multiple labels, inserting or updating by label_id.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $labels Array of label data arrays.
+	 * @return int Number of labels imported.
+	 */
+	public static function import_labels( array $labels ) : int {
+		global $wpdb;
+
+		$table  = $wpdb->prefix . LWPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$count  = 0;
+		$offset = self::get_next_sort_order();
+
+		foreach ( $labels as $index => $label ) {
+			$label_id = sanitize_text_field( $label['id'] ?? '' );
+
+			if ( empty( $label_id ) ) {
+				continue;
+			}
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant
+			$existing = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE label_id = %s", $label_id ) );
+
+			if ( $existing ) {
+				$wpdb->update(
+					$table,
+					array(
+						'name'   => sanitize_text_field( $label['name'] ?? '' ),
+						'status' => in_array( $label['status'] ?? 'active', array( 'active', 'inactive' ), true ) ? $label['status'] : 'active',
+						'data'   => wp_json_encode( $label ),
+					),
+					array( 'label_id' => $label_id ),
+					array( '%s', '%s', '%s' ),
+					array( '%s' )
+				);
+			} else {
+				$wpdb->insert(
+					$table,
+					array(
+						'label_id'   => $label_id,
+						'name'       => sanitize_text_field( $label['name'] ?? '' ),
+						'status'     => in_array( $label['status'] ?? 'active', array( 'active', 'inactive' ), true ) ? $label['status'] : 'active',
+						'sort_order' => $offset + $index,
+						'data'       => wp_json_encode( $label ),
+					),
+					array( '%s', '%s', '%s', '%d', '%s' )
+				);
+			}
+
+			++$count;
+		}
+
+		if ( $count > 0 ) {
+			self::bump_cache_version();
+		}
+
+		return $count;
+	}
+
+	/**
 	 * Get the next sort_order value (max + 1).
 	 *
 	 * @since 1.0.0

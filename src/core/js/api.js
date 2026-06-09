@@ -210,3 +210,19 @@ export const reorderLabels = async ( labelIds ) => {
 		data: { label_ids: labelIds },
 	} );
 };
+
+export const exportLabels = async () => {
+	return await apiFetch( {
+		path: `/${ apiNamespace }/labels/export`,
+		method: 'GET',
+	} );
+};
+
+export const importLabels = async ( fileContent ) => {
+	return await apiFetch( {
+		path: `/${ apiNamespace }/labels/import`,
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		data: { file: fileContent },
+	} );
+};

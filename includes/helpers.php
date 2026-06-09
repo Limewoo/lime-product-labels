@@ -750,3 +750,22 @@ if ( ! function_exists( 'limewoo_lpl_format_coupon' ) ) {
 		);
 	}
 }
+
+if ( ! function_exists( 'limewoo_lpl_data_signature' ) ) {
+	/**
+	 * Generate a SHA-256 integrity signature for export data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $data Data to sign (signature key is stripped before hashing).
+	 * @return string
+	 */
+	function limewoo_lpl_data_signature( $data ) {
+		if ( isset( $data['signature'] ) ) {
+			unset( $data['signature'] );
+		}
+
+		$string = wp_json_encode( $data );
+		return hash( 'sha256', $string );
+	}
+}

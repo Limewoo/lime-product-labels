@@ -203,6 +203,28 @@ class Controller {
 			)
 		);
 
+		// Label export.
+		register_rest_route(
+			self::API_NAMESPACE,
+			'/labels/export',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'export_labels_handler' ),
+				'permission_callback' => array( $this, 'admin_permissions_check' ),
+			)
+		);
+
+		// Label import.
+		register_rest_route(
+			self::API_NAMESPACE,
+			'/labels/import',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'import_labels_handler' ),
+				'permission_callback' => array( $this, 'admin_permissions_check' ),
+			)
+		);
+
 		// Label reorder.
 		register_rest_route(
 			self::API_NAMESPACE,
@@ -659,5 +681,210 @@ class Controller {
 				}
 				return sanitize_text_field( (string) $value );
 		}
+	}
+
+	/**
+	 * Sanitize an array of field values against field group definitions.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $data   Raw input data.
+	 * @param array $groups Field group definitions (each group has a 'fields' key).
+	 * @return array Sanitized data.
+	 */
+	private function sanitize_fields( $data, $groups ) {
+		if ( ! is_array( $data ) ) {
+			return array();
+		}
+
+		$sanitized = array();
+
+		foreach ( $groups as $group ) {
+			if ( empty( $group['fields'] ) || ! is_array( $group['fields'] ) ) {
+				continue;
+			}
+
+			foreach ( $group['fields'] as $field ) {
+				$sanitized = $this->sanitize_field( $field, $data, $sanitized );
+			}
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Sanitize a single field value based on its schema.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $field     Field definition.
+	 * @param array $data      Raw input data.
+	 * @param array $sanitized Running sanitized output.
+	 * @return array Updated sanitized output.
+	 */
+	private function sanitize_field( $field, $data, $sanitized ) {
+		$field_id   = $field['id'] ?? null;
+		$schema     = $field['schema'] ?? null;
+		$field_type = $schema['type'] ?? null;
+
+		if ( ! $field_id || ! $schema || ! array_key_exists( $field_id, $data ) ) {
+			return $sanitized;
+		}
+
+		$value = $data[ $field_id ];
+
+		switch ( $field_type ) {
+			case 'string':
+				if ( isset( $schema['enum'] ) && is_array( $schema['enum'] ) ) {
+					$sanitized[ $field_id ] = in_array( $value, $schema['enum'], true )
+						? $value
+						: ( $field['default'] ?? '' );
+				} else {
+					$sanitized[ $field_id ] = sanitize_text_field( $value );
+				}
+				break;
+
+			case 'number':
+				$sanitized[ $field_id ] = is_numeric( $value ) ? floatval( $value ) : ( $field['default'] ?? 0 );
+				break;
+
+			case 'integer':
+				$sanitized[ $field_id ] = is_numeric( $value ) ? intval( $value ) : ( $field['default'] ?? 0 );
+				break;
+
+			case 'boolean':
+				$sanitized[ $field_id ] = filter_var( $value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
+				if ( is_null( $sanitized[ $field_id ] ) ) {
+					$sanitized[ $field_id ] = $field['default'] ?? false;
+				}
+				break;
+
+			case 'array':
+				if ( ! is_array( $value ) ) {
+					$sanitized[ $field_id ] = $field['default'] ?? array();
+					break;
+				}
+				if ( isset( $schema['items']['type'] ) ) {
+					$item_type       = $schema['items']['type'];
+					$sanitized_items = array();
+					foreach ( $value as $item ) {
+						if ( 'integer' === $item_type ) {
+							$sanitized_items[] = is_numeric( $item ) ? intval( $item ) : null;
+						} elseif ( 'string' === $item_type ) {
+							$sanitized_items[] = sanitize_text_field( $item );
+						}
+					}
+					$sanitized[ $field_id ] = array_values( array_filter( $sanitized_items, fn( $item ) => $item !== null ) );
+				} else {
+					$sanitized[ $field_id ] = array_values( array_map( 'sanitize_text_field', $value ) );
+				}
+				break;
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Handler for exporting labels.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function export_labels_handler() {
+		$labels = LabelRepository::get_all();
+
+		if ( empty( $labels ) ) {
+			return rest_ensure_response( array(
+				'success' => false,
+				'message' => esc_html__( 'No labels found to export.', 'lime-product-labels' ),
+				'data'    => array(),
+			) );
+		}
+
+		$data = array(
+			'version'     => LWPL_VERSION,
+			'export_date' => current_time( 'mysql', true ),
+			'site_url'    => esc_url_raw( get_site_url() ),
+			'labels'      => $labels,
+		);
+
+		$data['signature'] = limewoo_lpl_data_signature( $data );
+
+		return rest_ensure_response( array(
+			'success' => true,
+			'file'    => sprintf(
+				'lime-product-labels-%s.json',
+				gmdate( 'Y-m-d-His' )
+			),
+			'data'    => $data,
+		) );
+	}
+
+	/**
+	 * Handler for importing labels.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WP_REST_Request $request The REST request object.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function import_labels_handler( \WP_REST_Request $request ) {
+		$file_content = $request->get_param( 'file' );
+
+		if ( strlen( $file_content ) > 2 * MB_IN_BYTES ) {
+			return new \WP_Error( 'file_too_large', esc_html__( 'Import file exceeds the 2MB limit.', 'lime-product-labels' ), array( 'status' => 413 ) );
+		}
+
+		$decoded = json_decode( $file_content, true );
+
+		if ( json_last_error() !== JSON_ERROR_NONE || ! is_array( $decoded ) ) {
+			return new \WP_Error( 'invalid_file', esc_html__( 'Invalid JSON file.', 'lime-product-labels' ), array( 'status' => 400 ) );
+		}
+
+		foreach ( array( 'version', 'export_date', 'site_url', 'labels', 'signature' ) as $key ) {
+			if ( ! isset( $decoded[ $key ] ) ) {
+				return new \WP_Error(
+					'missing_data',
+					sprintf(
+						/* Translators: %s: Key */
+						esc_html__( 'Missing key: %s', 'lime-product-labels' ),
+						$key
+					),
+					array( 'status' => 400 )
+				);
+			}
+		}
+
+		if ( count( $decoded['labels'] ) > 500 ) {
+			return new \WP_Error( 'too_many_labels', esc_html__( 'Import file contains too many labels (maximum: 500).', 'lime-product-labels' ), array( 'status' => 400 ) );
+		}
+
+		$signature = $decoded['signature'];
+		unset( $decoded['signature'] );
+
+		$expected_signature = limewoo_lpl_data_signature( $decoded );
+
+		if ( ! hash_equals( $expected_signature, $signature ) ) {
+			return new \WP_Error( 'invalid_signature', esc_html__( 'File signature is invalid.', 'lime-product-labels' ), array( 'status' => 400 ) );
+		}
+
+		$sanitized_labels = array();
+
+		foreach ( $decoded['labels'] as $label ) {
+			$sanitized_labels[] = $this->sanitize_fields( $label, Fields::get_all_fields( 'labels' ) );
+		}
+
+		$imported = LabelRepository::import_labels( $sanitized_labels );
+
+		return rest_ensure_response( array(
+			'success'  => true,
+			'imported' => $imported,
+			'message'  => sprintf(
+				/* Translators: %d: number of labels imported */
+				esc_html__( '%d label(s) imported.', 'lime-product-labels' ),
+				$imported
+			),
+		) );
 	}
 }

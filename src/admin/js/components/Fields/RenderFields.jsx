@@ -26,6 +26,7 @@ import UserRoleSelect from './UserRoleSelect';
 import ShapeSelect from './ShapeSelect';
 import ColorSelect from './ColorSelect';
 import UnitSelect from './UnitSelect';
+import ButtonField from './ButtonField';
 
 const RenderFields = ( props ) => {
 	const {
@@ -41,6 +42,7 @@ const RenderFields = ( props ) => {
 		groupFields = false,
 		formData = {},
 		handleChange = () => {},
+		handleButtonClick = () => {},
 		open = true,
 		disableAccordion = false,
 	} = props;
@@ -239,6 +241,15 @@ const RenderFields = ( props ) => {
 				);
 				break;
 			}
+
+			case 'button':
+				fieldComponent = (
+					<ButtonField
+						{ ...fieldProps }
+						handleButtonClick={ handleButtonClick }
+					/>
+				);
+				break;
 
 			case 'color':
 				fieldComponent = <ColorSelect { ...fieldProps } />;
