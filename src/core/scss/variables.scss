@@ -1,0 +1,62 @@
+$font: 'Inter', sans-serif;
+
+$text_primary: #303030;
+$text_secondary: #616161;
+$text_light: #fff;
+
+$bg_light: #fff;
+$bg_light_grey: #f7f7f7;
+$bg_dark: #303030;
+$bg_dark_grey: #616161;
+
+$font_size: 14px;
+$font_large: 16px;
+$font_small: 12px;
+
+$brand_color: #005BD3;
+$accent_color: #0EAA64;
+
+$link_color: #005BD3;
+$border_color: #e3e3e3;
+$border_radius: 12px;
+$border_radius_md: 8px;
+$border_radius_sm: 4px;
+$box_shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+
+$primary_color: #1a1a1a;
+$secondary_color: #000;
+
+$success: #CDFEE1;
+$error: #FEDAD9;
+
+$faded: #b5b5b5;
+
+$heading_large: 32px;
+$heading_medium: 28px;
+$heading_small: 22px;
+
+$gap-xxl: 50px;
+$gap-xl: 40px;
+$gap-lg: 32px;
+$gap-ml: 20px;
+$gap-xml: 25px;
+$gap-md: 16px;
+$gap-sm: 12px;
+$gap-xsm: 8px;
+$gap-xs: 4px;
+
+$card_padding: 16px;
+
+// Breakpoints
+$desktop-up: 1025px;
+$desktop-down: 1024px;
+$tablet-up: 769px;
+$tablet-down: 768px;
+
+@mixin fade-in( $duration: 0.3s, $ease: ease ) {
+	animation: fadeIn $duration $ease forwards;
+}
+
+@mixin fade-out( $duration: 0.3s, $ease: ease ) {
+	animation: fadeOut $duration $ease forwards;
+}

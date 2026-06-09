@@ -1,0 +1,33 @@
+{
+	"name": "lime-product-labels",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"start": "wp-scripts start",
+		"build": "wp-scripts build",
+		"zip": "bun run build && bun run zip:clean",
+		"zip:clean": "rm -f lime-product-labels-*.zip && bun run create-zip",
+		"create-zip": "mkdir -p ../lime-product-labels-temp && rsync -a --exclude-from='.distignore' ./ ../lime-product-labels-temp/lime-product-labels && cd ../lime-product-labels-temp && zip -r ../lime-product-labels/lime-product-labels-v$npm_package_version.zip lime-product-labels ; cd ../lime-product-labels && rm -rf ../lime-product-labels-temp"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "GPL-2.0-or-later",
+	"description": "",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/limewoo/lime-product-labels"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^32.2.0",
+		"copy-webpack-plugin": "^14.0.0"
+	},
+	"dependencies": {
+		"@shopify/polaris": "^13.9.5",
+		"@tanstack/react-query": "^5.100.14",
+		"@tanstack/react-table": "^8.21.3",
+		"lodash": "^4.18.1",
+		"react-hot-toast": "^2.6.0",
+		"react-sortablejs": "^6.1.4",
+		"sortablejs": "^1.15.7"
+	}
+}

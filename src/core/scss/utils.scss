@@ -1,0 +1,83 @@
+@use 'variables' as *;
+
+.hidden {
+	display: none;
+}
+
+@mixin flex-center($direction: row) {
+	display: flex;
+	flex-direction: $direction;
+	align-items: center;
+	justify-content: center;
+}
+
+.flex-center { @include flex-center(row); }
+.flex-center-col { @include flex-center(column); }
+
+.flex,
+.lime-flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.flex-row { flex-direction: row; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-nowrap { flex-wrap: nowrap; }
+
+.items-start { align-items: flex-start; }
+.items-center { align-items: center; }
+.items-end { align-items: flex-end; }
+.items-stretch { align-items: stretch; }
+.items-baseline { align-items: baseline; }
+
+.justify-start { justify-content: flex-start; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+
+.flex-grow { flex-grow: 1; }
+.flex-grow-0 { flex-grow: 0; }
+.flex-shrink { flex-shrink: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+
+.self-start { align-self: flex-start; }
+.self-center { align-self: center; }
+.self-end { align-self: flex-end; }
+.self-stretch { align-self: stretch; }
+
+.text-primary { color: $text_primary; }
+.text-secondary { color: $text_secondary; }
+.text-center { text-align: center; }
+
+.position-relative { position: relative; }
+.position-absolute { position: absolute; }
+
+.bg-none { background: none !important; }
+.border-none { border: none !important; }
+.box-shadow-none { box-shadow: none !important; }
+.round-it { border-radius: 50%; }
+
+.margin-0 { margin: 0 !important; }
+.margin-inline-0 { margin-inline: 0 !important; }
+.margin-block-0 { margin-block: 0 !important; }
+.padding-0 { padding: 0 !important; }
+.padding-inline-0 { padding-inline: 0 !important; }
+.padding-block-0 { padding-block: 0 !important; }
+
+$gap-sizes: (
+	xxl: $gap-xxl,
+	xl: $gap-xl,
+	xml: $gap-xml,
+	ml: $gap-ml,
+	lg: $gap-lg,
+	md: $gap-md,
+	sm: $gap-sm,
+	xsm: $gap-xsm,
+	xs: $gap-xs,
+	none: 0,
+);
+
+.gap {
+	@each $name, $size in $gap-sizes {
+		&-#{$name} { gap: #{$size}; }
+	}
+}

@@ -1,0 +1,708 @@
+@use 'sass:color';
+@use '../../core/scss/variables' as *;
+@use 'fonts';
+@use '../../core/scss/utils';
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.auto-fold #wpcontent,
+#wpcontent {
+	padding-left: 0;
+}
+
+a {
+	color: $link_color;
+	text-decoration: none;
+
+	&:hover {
+		color: color.adjust( $link_color, $lightness: -15% );
+	}
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+:root {
+	--pg-layout-width-one-third-width-base: 22rem;
+	--p-font-weight-regular: 400;
+
+	.Polaris-SkeletonThumbnail {
+		--pc-skeleton-thumbnail-large-size: 150px;
+	}
+}
+
+.lime-product-labels {
+	&-wrapper {
+		font-family: $font;
+		font-size: $font_size;
+		line-height: 1.4;
+		color: $text_primary;
+	}
+
+	&__topbar {
+		& {
+			background-color: $bg_light;
+			height: 56px;
+			box-shadow: 0 1px 0 rgba(26, 26, 26, 0.07), inset 1px 0 0 rgba(0, 0, 0, 0.13), inset -1px 0 0 rgba(0, 0, 0, 0.13), inset 0 -1px 0 rgba(0, 0, 0, 0.17), inset 0 1px 0 rgba(204, 204, 204, 0.5);
+			justify-content: space-between;
+			margin-bottom: $gap-md;
+			padding-inline: $gap-md;
+		}
+
+		&--end {
+			@media (max-width: $desktop-down) {
+				display: none;
+			}
+		}
+
+		#lime-product-labels__topbar-button {
+			&--settings,
+			&--external {
+				padding-inline: 10px 12px;
+
+				.Polaris-Text--root {
+					font-weight: 500;
+				}
+			}
+		}
+	}
+
+	&__logo {
+		display: inline-flex;
+		align-items: center;
+		font-weight: 700;
+		font-size: $font_large;
+		color: $text_primary;
+
+		&-text {
+			font-weight: 700;
+			font-size: $font_large;
+		}
+	}
+
+	&__tab {
+		&-navs {
+			li {
+				margin: 0;
+				padding: 0;
+			}
+
+			li .components-button {
+				background: none;
+				display: block;
+				height: auto;
+				color: $text_primary;
+				font-weight: 500;
+				position: relative;
+				padding: $gap-ml 6px;
+				outline: none;
+
+				&.is-primary {
+					&:after {
+						content: '';
+						position: absolute;
+						bottom: 0;
+						left: 0;
+						right: 0;
+						height: 3px;
+						background-color: $primary_color;
+					}
+				}
+
+				&:hover,
+				&:active,
+				&:focus {
+					color: inherit !important;
+					outline: none !important;
+					box-shadow: none !important;
+					background: none !important;
+				}
+			}
+		}
+
+		&-content {
+			&:empty {
+				display: none;
+			}
+		}
+	}
+
+	&__tab-header {
+		.Polaris-Button--variantTertiary {
+			background-color: #e3e3e3;
+		}
+	}
+
+	&__action-buttons {
+		&.is-sticky {
+			position: fixed;
+			top: 50px;
+			right: 25px;
+			z-index: 99;
+		}
+
+		.save-split-btn {
+			.Polaris-ButtonGroup--variantSegmented .Polaris-ButtonGroup__Item:not(:first-child) {
+				margin-left: 0;
+			}
+
+			.save-dropdown {
+				min-width: 120px;
+				white-space: nowrap;
+				padding: $gap-xsm;
+				top: calc(100% + 5px);
+				z-index: 9;
+				right: 0;
+				background-color: $bg_light;
+				border: 1px solid $border_color;
+				border-radius: $border_radius_md;
+
+				button {
+					width: 100%;
+					color: $text_primary;
+					padding-block: 10px;
+
+					span {
+						font-size: $font_small;
+					}
+				}
+			}
+		}
+	}
+
+	&__body {
+		margin-inline: auto;
+		max-width: 1600px;
+
+		@media (min-width: 1241px) {
+			padding-inline: 165px;
+		}
+
+		@media (max-width: 1240px) {
+			padding-inline: 75px;
+		}
+
+		@media (max-width: $desktop-down) {
+			padding-inline: 15px;
+		}
+	}
+
+	&__loader {
+		position: absolute;
+		inset: 0;
+		height: 100vh;
+	}
+
+	&__form {
+		gap: $gap-md;
+
+		> div {
+			width: 100%;
+		}
+
+		.Polaris-Page {
+			width: 100%;
+			max-width: none;
+			padding-inline: 0;
+
+			.Polaris-Box {
+				padding-block: $gap-sm;
+			}
+		}
+	}
+
+	&__section {
+		&-hidden {
+			display: none;
+		}
+
+		&-header {
+			border-bottom: 1px solid $border_color;
+
+			&:hover {
+				.lime-product-labels__section-icon {
+					visibility: visible;
+				}
+			}
+
+			&--has-accordion {
+				cursor: pointer;
+			}
+
+			.Polaris-Text--regular {
+				font-size: 13px;
+				color: $faded;
+			}
+		}
+
+		&-icon {
+			visibility: hidden;
+			cursor: pointer;
+			right: $gap-md;
+			top: 50%;
+			transform: translateY(-50%);
+			margin-top: 1px;
+			line-height: 1;
+
+			svg {
+				color: $faded;
+
+				&:hover {
+					color: #4a4a4a;
+				}
+			}
+		}
+	}
+
+	// Fields
+	&__fields {
+		.Polaris-ResourceItem {
+			cursor: default;
+
+			&:hover {
+				background: none;
+			}
+		}
+	}
+
+	&__field {
+		gap: $gap-xsm;
+
+		input,
+		select,
+		textarea {
+			padding: 6px 12px;
+			line-height: 1;
+			height: 38px;
+
+			&,
+			&:focus {
+				box-shadow: none !important;
+				background: none !important;
+				border: none !important;
+			}
+		}
+
+		input[type="checkbox"]:checked:before {
+			content: none;
+		}
+
+		.Polaris-Choice--disabled > .Polaris-Choice__Label {
+			color: $text_primary;
+		}
+
+		.Polaris-Labelled__LabelWrapper {
+			margin-bottom: $gap-xsm;
+		}
+
+		.Polaris-Select__Content {
+			height: 38px;
+		}
+
+		&--select {
+			select {
+				min-width: 100%;
+			}
+		}
+
+		&--color {
+			.Polaris-ShadowBevel {
+				border-radius: 0;
+			}
+
+			.Polaris-ShadowBevel:before,
+			.Polaris-Button,
+			&-preview {
+				border-radius: $border_radius_sm;
+			}
+
+			.Polaris-Button {
+				padding-inline: 6px;
+			}
+
+			&-preview {
+				cursor: pointer;
+				display: block;
+				width: 20px;
+				height: 20px;
+				border: 1px solid rgba(0, 0, 0, 0.1);
+			}
+		}
+
+		// Gutenberg input styles
+		@at-root {
+			#wpcontent {
+				.lime-product-labels__field {
+					.components-input-control {
+						.components-input-control__container:hover {
+							border-radius: $border_radius_md;
+							background: $bg_light_grey;
+						}
+
+						input {
+							height: 38px;
+							min-height: 38px;
+
+							&:focus {
+								~ .components-input-control__backdrop {
+									border-color: rgb(44, 51, 56);
+									box-shadow: none;
+									outline: 0.125rem solid $brand_color;
+									outline-offset: 0.0625rem;
+								}
+							}
+						}
+
+						.components-input-control__backdrop {
+							border-radius: $border_radius_md;
+						}
+					}
+
+					.components-input-control__suffix select {
+						box-shadow: none;
+					}
+				}
+			}
+		}
+	}
+
+	// Cards (footer resource cards)
+	&__cards {
+		display: grid;
+		gap: $gap-md;
+
+		@for $i from 1 through 6 {
+			&.lime-product-labels__cards-#{$i} {
+				grid-template-columns: repeat(#{$i}, 1fr);
+
+				@media (max-width: 1200px) {
+					grid-template-columns: repeat(3, 1fr);
+				}
+
+				@media (max-width: 1024px) {
+					grid-template-columns: repeat(2, 1fr);
+				}
+
+				@media (max-width: 600px) {
+					grid-template-columns: 1fr;
+				}
+			}
+		}
+	}
+
+	&__card {
+		&__title {
+			font-weight: 600;
+			margin-bottom: $gap-xs;
+		}
+
+		&__text {
+			font-weight: 400;
+			color: $text_secondary;
+			font-size: $font_small;
+		}
+
+		&__icon {
+			display: inline-block;
+			margin-bottom: $gap-sm;
+		}
+
+		img {
+			width: 100%;
+			height: auto;
+			display: block;
+		}
+	}
+
+	// Labels table
+	&__list {
+		&-empty {
+		}
+	}
+
+	// Pagination
+	&__pagination {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: $gap-sm;
+		padding: $gap-sm $gap-md;
+		border-top: 1px solid $border_color;
+		font-size: $font_size;
+		color: $text_primary;
+
+		&-total {
+			color: $text_secondary;
+		}
+	}
+
+	// Modal
+	&__modal {
+		.components-modal__header {
+			height: auto;
+			background: #f7f7f7;
+			padding-block: 12px 10px;
+			padding-inline: 32px 16px;
+		}
+
+		&-items-select {
+			.components-modal__header {
+				text-transform: capitalize;
+			}
+
+			.lime-product-labels__table {
+				th,
+				td {
+					white-space: normal;
+
+					&:first-letter {
+						text-transform: uppercase;
+					}
+				}
+
+				&-product {
+					&.is-multi-select tbody tr td:first-of-type,
+					tbody tr th:first-child {
+						width: 58px;
+						max-width: 58px;
+					}
+				}
+
+				&.is-multi-select {
+					tbody tr th:first-child {
+						width: 36px;
+						max-width: 36px;
+					}
+				}
+			}
+		}
+	}
+}
+
+// Sortable table
+.lime-product-labels-sortable {
+	border: 1px solid $border_color;
+	border-radius: $border_radius;
+
+	&__row,
+	&__header {
+		> div:not(:nth-child(2)) {
+			text-align: center;
+		}
+	}
+
+	&__row {
+		display: grid;
+		grid-template-columns: 40px 1fr 1fr 1fr;
+		align-items: center;
+		padding-block: $gap-md;
+
+		@media (max-width: $desktop-down) {
+			grid-template-columns: 40px 1fr 1fr 1fr;
+
+			> div {
+				display: none;
+
+				&:first-child,
+				&.label-name,
+				&.label-status,
+				&:last-child {
+					display: block;
+				}
+			}
+		}
+	}
+
+	&__header {
+		color: $bg_dark_grey;
+		padding-block: $gap-md;
+		background-color: $bg_light_grey;
+		border-radius: $border_radius $border_radius 0 0;
+	}
+
+	&__body {
+		background: $bg_light;
+		border-radius: 0 0 $border_radius $border_radius;
+
+		> div {
+			border-top: 1px solid $border_color;
+		}
+	}
+
+	.label-name {
+		cursor: pointer;
+		font-weight: 500;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	.drag-handle {
+		cursor: move;
+	}
+
+	.sortable-ghost {
+		opacity: 0.4;
+	}
+
+	.sortable-chosen {
+		background-color: $bg_light_grey;
+	}
+
+	.sortable-header {
+		cursor: pointer;
+		position: relative;
+
+		.sortable-header__content {
+			padding-left: 20px;
+		}
+
+		.sort-icon-hover {
+			opacity: 0;
+			transition: opacity 0.2s ease;
+		}
+
+		&:hover .sort-icon-hover {
+			opacity: 0.5;
+		}
+
+		.Polaris-Icon {
+			margin-inline: 0;
+		}
+	}
+
+	.label-actions {
+		> div {
+			gap: 12px;
+		}
+
+		.label-actions-toggle {
+			width: 120px;
+			padding: $gap-md;
+			top: calc(100% + 5px);
+			z-index: 9;
+			left: 55%;
+			transform: translateX(-50%);
+			text-align: left;
+			background-color: $bg_light;
+			border: 1px solid $border_color;
+			border-radius: $border_radius_md;
+
+			button {
+				color: $text_primary;
+				padding-block: 10px;
+
+				span {
+					font-size: $font_small;
+				}
+			}
+		}
+
+		button {
+			&:focus {
+				outline: none;
+			}
+		}
+	}
+
+}
+
+.sortable-fallback {
+	background-color: $bg_light_grey;
+	border: 1px solid $border_color;
+	border-radius: $border_radius_sm;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+// Preview
+.lime-product-labels {
+	&__preview {
+		&-wrapper {
+			@media (max-width: 1124px) {
+				position: relative !important;
+			}
+		}
+
+		&-widget {
+			max-height: calc(100vh - 70px);
+			overflow-y: auto;
+		}
+
+		.Polaris-Box {
+			--p-border-width-200: .5rem;
+		}
+
+		.Polaris-Button .Polaris-Text--regular {
+			color: $link_color;
+		}
+
+		svg,
+		img {
+			width: 100%;
+		}
+
+		img {
+			display: block;
+		}
+
+		&-badge {
+			position: absolute;
+			top: 8px;
+			left: 8px;
+			background: $primary_color;
+			color: $text_primary;
+			font-size: 0.625rem;
+			font-weight: 600;
+			padding: 3px 6px;
+			border-radius: $border_radius_sm;
+			line-height: 1.4;
+			white-space: nowrap;
+			max-width: 80%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+}
+
+.lime-product-labels__shape-select {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 12px;
+
+	@media (min-width: 768px) {
+		grid-template-columns: repeat(6, 1fr);
+	}
+}
+
+.lime-product-labels__shape-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 5px;
+	background: $bg_light;
+	border: 2px solid $border_color;
+	border-radius: $border_radius_sm;
+	cursor: pointer;
+	transition: border-color 0.15s ease;
+
+	svg {
+		width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	&:hover {
+		border-color: $primary_color;
+	}
+
+	&.is-selected {
+		border-color: $primary_color;
+	}
+}

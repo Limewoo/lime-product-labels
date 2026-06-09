@@ -1,0 +1,25 @@
+export const SET_OPTIONS = 'SET_OPTIONS';
+export const SET_INITIAL_OPTIONS = 'SET_INITIAL_OPTIONS';
+export const SAVE_OPTIONS = 'SAVE_OPTIONS';
+export const CANCEL_SAVE = 'CANCEL_SAVE';
+
+export const SET_ACTIVE_TAB = 'SET_ACTIVE_TAB';
+export const RESET_CANCEL = 'RESET_CANCEL';
+
+export const SET_FORM_CHANGED = 'SET_FORM_CHANGED';
+
+export const SET_LABEL_MODE = 'SET_LABEL_MODE';
+export const SET_CURRENT_LABEL = 'SET_CURRENT_LABEL';
+export const SET_LABEL_CHANGED = 'SET_LABEL_CHANGED';
+export const CANCEL_LABEL = 'CANCEL_LABEL';
+
+export const SET_STYLES = 'SET_STYLES';
+export const SET_SETTINGS = 'SET_SETTINGS';
+
+export const SET_STATUS = 'SET_STATUS';
+export const CLEAR_STATUS = 'CLEAR_STATUS';
+
+export const SET_WIDGET_VISIBILITY = 'SET_WIDGET_VISIBILITY';
+
+export const SET_ERRORS = 'SET_ERRORS';
+export const CLEAR_ERRORS = 'CLEAR_ERRORS';
