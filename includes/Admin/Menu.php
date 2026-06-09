@@ -56,7 +56,7 @@ class Menu {
 
 		add_menu_page(
 			esc_html__( 'Lime Product Labels', 'lime-product-labels' ),
-			esc_html__( 'Product Labels', 'lime-product-labels' ),
+			esc_html__( 'Lime Labels', 'lime-product-labels' ),
 			$capability,
 			self::MENU_SLUG,
 			array( $this, 'render_content' ),

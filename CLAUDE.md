@@ -40,6 +40,7 @@ PSR-4: `LimeProductLabels\` maps to `includes/`. `includes/helpers.php` is autol
 | `Labels\LabelRepository` | All label DB operations: paginated list, create, update, delete, reorder, get_active_labels (version-keyed transient cache). File: `includes/Labels/LabelRepository.php` |
 | `Fields` | Single source of truth for all label/styles/settings field schemas (used by both PHP sanitization and JS form rendering) |
 | `Admin` | Enqueues admin assets, passes `window.LimeProductLabels` localized data |
+| `Admin\Menu` | Registers WP admin menu ("Lime Labels") + submenus (Labels/Styles/Settings). Slug: `lime-product-labels`. File: `includes/Admin/Menu.php` |
 | `Controller` | REST API (`lime_product_labels/v1`). Label CRUD: `GET/POST /labels`, `GET/PUT/DELETE /labels/{id}`, `POST /labels/reorder`. Styles + settings saved via WP Settings API. Data endpoints: /products, /taxonomies, /users, /user_roles, /coupons |
 | `Frontend` | Badge overlay on product images (Phase 3, stub for now) |
 
@@ -59,12 +60,12 @@ No License, Updater, or Analytics classes.
 // Section: hidden   → 'id' (hidden, UUID)
 // Section: default  → 'name' (text, 'Label Name')
 // Section: action   → 'status' (select, active/inactive)
-// Section: targeting — product_rule, include/exclude fields (same pattern as bxgy customer_buys, no quantity fields)
+// Section: targeting — product_rule (select: all | on_sale | featured | new_arrivals | out_of_stock | low_stock | best_sellers | top_rated | on_backorder | products | categories | tags | brands), new_arrivals_days (number, default:30, shown when product_rule===new_arrivals), include/exclude fields for manual-selection rules. exclude_categories/tags/brands show when product_rule NOT IN [products,categories,tags,brands].
 // Section: placement_and_visibility — show_on_pages (checkbox: product/archive), product_page_placement (select: top_left/top_right), archive_page_placement (select: top_left/top_right), show_on_devices (checkbox: desktop/mobile)
 // Section: label_design — label_type (select: text/image, default: text), label_shape (shape-select, conditional on label_type=text, default: text-shape-badge)
 // Section: advanced — user_rule, user_selection_type, selected_users (data_source:users), selected_user_roles (data_source:user_roles) — flat fields, NOT group type (no GroupFields renderer exists)
 // get_styles_fields() → section: label_styling — style_method (select: automatic/manual), badge_bg (color), badge_color (color, col:half pair with badge_bg), badge_radius (unit+slider), badge_font_size (unit+slider), badge_padding_block (unit+slider), badge_padding_inline (unit+slider). All manual fields conditional on style_method===manual.
-// get_settings_fields() → []  (stub, populate in future phase)
+// get_settings_fields() → export_import section (export/import buttons), data_management section (delete_on_uninstall checkbox)
 ```
 
 **`shape-select` field type:** custom type handled in `RenderFields.jsx` → `ShapeSelect.jsx`. Renders a grid of SVG shape buttons. SVGs live in `src/admin/images/shapes/` (8 text shapes: badge, tag, chevron, circle, banner, corner, burst, shield). `attributes.shape_type` selects which set to show (currently only `text`). Do NOT use `group` type for user condition fields — this plugin has no `GroupFields` renderer.

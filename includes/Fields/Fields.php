@@ -112,6 +112,38 @@ class Fields {
 								'value' => 'all',
 							),
 							array(
+								'label' => esc_html__( 'On sale', 'lime-product-labels' ),
+								'value' => 'on_sale',
+							),
+							array(
+								'label' => esc_html__( 'Featured', 'lime-product-labels' ),
+								'value' => 'featured',
+							),
+							array(
+								'label' => esc_html__( 'New arrivals', 'lime-product-labels' ),
+								'value' => 'new_arrivals',
+							),
+							array(
+								'label' => esc_html__( 'Out of stock', 'lime-product-labels' ),
+								'value' => 'out_of_stock',
+							),
+							array(
+								'label' => esc_html__( 'Low stock', 'lime-product-labels' ),
+								'value' => 'low_stock',
+							),
+							array(
+								'label' => esc_html__( 'Best sellers', 'lime-product-labels' ),
+								'value' => 'best_sellers',
+							),
+							array(
+								'label' => esc_html__( 'Top rated', 'lime-product-labels' ),
+								'value' => 'top_rated',
+							),
+							array(
+								'label' => esc_html__( 'On backorder', 'lime-product-labels' ),
+								'value' => 'on_backorder',
+							),
+							array(
 								'label' => esc_html__( 'Specific products', 'lime-product-labels' ),
 								'value' => 'products',
 							),
@@ -131,7 +163,33 @@ class Fields {
 						'default' => 'products',
 						'schema'  => array(
 							'type' => 'string',
-							'enum' => array( 'all', 'products', 'categories', 'tags', 'brands' ),
+							'enum' => array( 'all', 'on_sale', 'featured', 'new_arrivals', 'out_of_stock', 'low_stock', 'best_sellers', 'top_rated', 'on_backorder', 'products', 'categories', 'tags', 'brands' ),
+						),
+					),
+					array(
+						'id'          => 'new_arrivals_days',
+						'type'        => 'number',
+						'label'       => esc_html__( 'Added within (days)', 'lime-product-labels' ),
+						'desc'        => esc_html__( 'Show label on products published within this many days.', 'lime-product-labels' ),
+						'placeholder' => '30',
+						'default'     => 30,
+						'attributes'  => array(
+							'min'  => 1,
+							'max'  => 365,
+							'step' => 1,
+						),
+						'conditions'  => array(
+							'logic' => 'AND',
+							'rules' => array(
+								array(
+									'field'    => 'product_rule',
+									'operator' => '===',
+									'value'    => 'new_arrivals',
+								),
+							),
+						),
+						'schema'      => array(
+							'type' => 'integer',
 						),
 					),
 					array(
@@ -354,8 +412,8 @@ class Fields {
 								),
 								array(
 									'field'    => 'product_rule',
-									'operator' => 'in',
-									'value'    => array( 'all' ),
+									'operator' => 'not_in',
+									'value'    => array( 'products', 'categories', 'tags', 'brands' ),
 								),
 								array(
 									'field'    => 'exclude_rule',
@@ -389,8 +447,8 @@ class Fields {
 								),
 								array(
 									'field'    => 'product_rule',
-									'operator' => 'in',
-									'value'    => array( 'all' ),
+									'operator' => 'not_in',
+									'value'    => array( 'products', 'categories', 'tags', 'brands' ),
 								),
 								array(
 									'field'    => 'exclude_rule',
@@ -424,8 +482,8 @@ class Fields {
 								),
 								array(
 									'field'    => 'product_rule',
-									'operator' => 'in',
-									'value'    => array( 'all' ),
+									'operator' => 'not_in',
+									'value'    => array( 'products', 'categories', 'tags', 'brands' ),
 								),
 								array(
 									'field'    => 'exclude_rule',
