@@ -63,7 +63,7 @@ No License, Updater, or Analytics classes.
 // Section: placement_and_visibility — show_on_pages (checkbox: product/archive), product_page_placement (select: top_left/top_right), archive_page_placement (select: top_left/top_right), show_on_devices (checkbox: desktop/mobile)
 // Section: label_design — label_type (select: text/image, default: text), label_shape (shape-select, conditional on label_type=text, default: text-shape-badge)
 // Section: advanced — user_rule, user_selection_type, selected_users (data_source:users), selected_user_roles (data_source:user_roles) — flat fields, NOT group type (no GroupFields renderer exists)
-// get_styles_fields() → []  (stub, populate in future phase)
+// get_styles_fields() → section: label_styling — style_method (select: automatic/manual), badge_bg (color), badge_color (color, col:half pair with badge_bg), badge_radius (unit+slider), badge_font_size (unit+slider), badge_padding_block (unit+slider), badge_padding_inline (unit+slider). All manual fields conditional on style_method===manual.
 // get_settings_fields() → []  (stub, populate in future phase)
 ```
 
@@ -125,6 +125,8 @@ src/admin/fonts/
 
 ### Admin UI (`src/admin/`)
 React + Shopify Polaris. Entry: `index.js` → imports Polaris CSS + SCSS + `custom.js`, then calls `renderApp(AdminApp)`. `AdminApp.jsx` is the root component (no PolarisProvider — that is in `renderApp.js`). Tabs: Labels, Styles, Settings. `LabelForm.jsx` reads field schema from `window.LimeProductLabels.fields` and renders via `RenderFields.jsx` — adding a new field only requires updating `Fields.php`.
+
+`AdminApp.jsx` gates `<Body/>` behind `loading` from `useAppStore()` — renders `<Loader/>` until `AppContext.fetchData()` resolves. **Do not remove this gate.** Tab components (`TabStyles`, etc.) use `useForm({ initialData: options?.styles })` which calls `useState(initialData)` — if `Body` mounts before options load, `initialData` is `{}` and saved values are lost on reload. `RenderFields.jsx` falls back to `field.default` before `''` so unsaved fields show their PHP-defined defaults.
 
 `custom.js` — runs on `domReady`, calls `setActiveWPMenu(getCurrentTab())` to sync the WP admin submenu highlight with the current tab URL param.
 

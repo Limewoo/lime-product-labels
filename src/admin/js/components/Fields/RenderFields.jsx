@@ -24,6 +24,8 @@ import TaxonomySelect from './TaxonomySelect';
 import UserSelect from './UserSelect';
 import UserRoleSelect from './UserRoleSelect';
 import ShapeSelect from './ShapeSelect';
+import ColorSelect from './ColorSelect';
+import UnitSelect from './UnitSelect';
 
 const RenderFields = ( props ) => {
 	const {
@@ -82,7 +84,7 @@ const RenderFields = ( props ) => {
 		if ( ! fieldId || ! fieldType ) return null;
 
 		const override = fieldOverrides[ fieldId ];
-		const value    = override?.value ?? formData[ fieldId ] ?? '';
+		const value    = override?.value ?? formData[ fieldId ] ?? field.default ?? '';
 		const onChange = override?.onChange ?? ( ( val ) => handleChange( val, fieldId, field ) );
 		const onClear  = override?.onClear ?? ( () => onChange( '' ) );
 
@@ -237,6 +239,14 @@ const RenderFields = ( props ) => {
 				);
 				break;
 			}
+
+			case 'color':
+				fieldComponent = <ColorSelect { ...fieldProps } />;
+				break;
+
+			case 'unit':
+				fieldComponent = <UnitSelect { ...fieldProps } />;
+				break;
 
 			case 'shape-select':
 				fieldComponent = (

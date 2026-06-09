@@ -2,7 +2,7 @@ import { useAppContext } from '@coreJS/contexts/AppContext';
 import * as actionTypes from '@coreJS/store/actionTypes';
 
 const useAppStore = () => {
-	const { state, dispatch, handleFormSubmit } = useAppContext();
+	const { state, dispatch, handleFormSubmit, loading } = useAppContext();
 
 	const {
 		options,
@@ -40,6 +40,7 @@ const useAppStore = () => {
 		isLabelChanged,
 		isCancelled,
 		isWidgetOpen,
+		loading,
 		setActiveTab,
 		setLabelMode,
 		setCurrentLabel,

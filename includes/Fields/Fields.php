@@ -750,7 +750,197 @@ class Fields {
 	 * @return array
 	 */
 	public static function get_styles_fields() {
-		$fields = array();
+		$manual_condition = array(
+			'logic' => 'AND',
+			'rules' => array(
+				array(
+					'field'    => 'style_method',
+					'operator' => '===',
+					'value'    => 'manual',
+				),
+			),
+		);
+
+		$fields = array(
+			array(
+				'section_id'  => 'label_styling',
+				'title'       => esc_html__( 'Label styling', 'lime-product-labels' ),
+				'description' => '',
+				'fields'      => array(
+					array(
+						'id'      => 'style_method',
+						'type'    => 'select',
+						'label'   => esc_html__( 'Badge styling', 'lime-product-labels' ),
+						'desc'    => esc_html__( 'Match your store\'s branding and style.', 'lime-product-labels' ),
+						'options' => array(
+							array(
+								'label'       => esc_html__( 'Automatic', 'lime-product-labels' ),
+								'value'       => 'automatic',
+								'parent_desc' => 'hide',
+							),
+							array(
+								'label' => esc_html__( 'Manual', 'lime-product-labels' ),
+								'value' => 'manual',
+							),
+						),
+						'default' => 'automatic',
+						'schema'  => array(
+							'type' => 'string',
+							'enum' => array( 'automatic', 'manual' ),
+						),
+					),
+
+					// Badge
+					array(
+						'id'          => 'badge_note',
+						'type'        => 'note',
+						'label'       => esc_html__( 'Badge', 'lime-product-labels' ),
+						'label_tone'  => 'subdued',
+						'spacing_top' => '8px',
+						'conditions'  => $manual_condition,
+					),
+					array(
+						'id'          => 'badge_bg',
+						'type'        => 'color',
+						'label'       => esc_html__( 'Background', 'lime-product-labels' ),
+						'default'     => '#1a1a1a',
+						'placeholder' => esc_html__( 'Select a color', 'lime-product-labels' ),
+						'col'         => 'half',
+						'css_var'     => true,
+						'conditions'  => $manual_condition,
+						'schema'      => array( 'type' => 'string' ),
+					),
+					array(
+						'id'          => 'badge_color',
+						'type'        => 'color',
+						'label'       => esc_html__( 'Text', 'lime-product-labels' ),
+						'default'     => '#ffffff',
+						'placeholder' => esc_html__( 'Select a color', 'lime-product-labels' ),
+						'col'         => 'half',
+						'css_var'     => true,
+						'conditions'  => $manual_condition,
+						'schema'      => array( 'type' => 'string' ),
+					),
+					array(
+						'id'         => 'badge_radius',
+						'type'       => 'unit',
+						'slider'     => true,
+						'label'      => esc_html__( 'Corner radius', 'lime-product-labels' ),
+						'attributes' => array(
+							'min'   => 0,
+							'max'   => 999,
+							'step'  => 1,
+							'units' => array(
+								array(
+									'label' => 'px',
+									'value' => 'px',
+								),
+								array(
+									'label' => 'em',
+									'value' => 'em',
+								),
+								array(
+									'label' => 'rem',
+									'value' => 'rem',
+								),
+							),
+						),
+						'default'    => '4px',
+						'css_var'    => true,
+						'conditions' => $manual_condition,
+						'schema'     => array( 'type' => 'string' ),
+					),
+
+					array(
+						'id'         => 'badge_font_size',
+						'type'       => 'unit',
+						'slider'     => true,
+						'label'      => esc_html__( 'Font size', 'lime-product-labels' ),
+						'attributes' => array(
+							'min'   => 8,
+							'max'   => 64,
+							'step'  => 1,
+							'units' => array(
+								array(
+									'label' => 'px',
+									'value' => 'px',
+								),
+								array(
+									'label' => 'em',
+									'value' => 'em',
+								),
+								array(
+									'label' => 'rem',
+									'value' => 'rem',
+								),
+							),
+						),
+						'default'    => '11px',
+						'css_var'    => true,
+						'conditions' => $manual_condition,
+						'schema'     => array( 'type' => 'string' ),
+					),
+					array(
+						'id'         => 'badge_padding_block',
+						'type'       => 'unit',
+						'slider'     => true,
+						'label'      => esc_html__( 'Padding (top / bottom)', 'lime-product-labels' ),
+						'attributes' => array(
+							'min'   => 0,
+							'max'   => 50,
+							'step'  => 1,
+							'units' => array(
+								array(
+									'label' => 'px',
+									'value' => 'px',
+								),
+								array(
+									'label' => 'em',
+									'value' => 'em',
+								),
+								array(
+									'label' => 'rem',
+									'value' => 'rem',
+								),
+							),
+						),
+						'default'    => '3px',
+						'css_var'    => true,
+						'conditions' => $manual_condition,
+						'schema'     => array( 'type' => 'string' ),
+					),
+					array(
+						'id'         => 'badge_padding_inline',
+						'type'       => 'unit',
+						'slider'     => true,
+						'label'      => esc_html__( 'Padding (left / right)', 'lime-product-labels' ),
+						'attributes' => array(
+							'min'   => 0,
+							'max'   => 50,
+							'step'  => 1,
+							'units' => array(
+								array(
+									'label' => 'px',
+									'value' => 'px',
+								),
+								array(
+									'label' => 'em',
+									'value' => 'em',
+								),
+								array(
+									'label' => 'rem',
+									'value' => 'rem',
+								),
+							),
+						),
+						'default'    => '6px',
+						'css_var'    => true,
+						'conditions' => $manual_condition,
+						'schema'     => array( 'type' => 'string' ),
+					),
+				),
+			),
+		);
 
 		/**
 		 * Filter styles fields.
