@@ -42,7 +42,7 @@ PSR-4: `LimeProductLabels\` maps to `includes/`. `includes/helpers.php` is autol
 | `Admin` | Enqueues admin assets, passes `window.LimeProductLabels` localized data |
 | `Admin\Menu` | Registers WP admin menu ("Lime Labels") + submenus (Labels/Styles/Settings). Slug: `lime-product-labels`. File: `includes/Admin/Menu.php` |
 | `Controller` | REST API (`lime_product_labels/v1`). Label CRUD: `GET/POST /labels`, `GET/PUT/DELETE /labels/{id}`, `POST /labels/reorder`. Styles + settings saved via WP Settings API. Data endpoints: /products, /taxonomies, /users, /user_roles, /coupons |
-| `Frontend` | Badge overlay on product images (Phase 3, stub for now) |
+| `Frontend` | Badge overlay on product images. Hooks: `init→lpl_init`, `wp_enqueue_scripts→enqueue_assets`, `woocommerce_before_shop_loop_item→render_archive_labels`, `woocommerce_product_thumbnails→render_single_labels`, `woocommerce_single_product_image_gallery_classes→add_gallery_class`. File: `includes/Frontend/Frontend.php` |
 
 No License, Updater, or Analytics classes.
 
@@ -64,7 +64,7 @@ No License, Updater, or Analytics classes.
 // Section: placement_and_visibility — show_on_pages (checkbox: product/archive), product_page_placement (select: top_left/top_right), archive_page_placement (select: top_left/top_right), show_on_devices (checkbox: desktop/mobile)
 // Section: label_design — label_type (select: text/image, default: text), label_shape (shape-select, conditional on label_type=text, default: text-shape-badge)
 // Section: advanced — user_rule, user_selection_type, selected_users (data_source:users), selected_user_roles (data_source:user_roles) — flat fields, NOT group type (no GroupFields renderer exists)
-// get_styles_fields() → section: label_styling — style_method (select: automatic/manual), badge_bg (color), badge_color (color, col:half pair with badge_bg), badge_radius (unit+slider), badge_font_size (unit+slider), badge_padding_block (unit+slider), badge_padding_inline (unit+slider). All manual fields conditional on style_method===manual.
+// get_styles_fields() → section: label_styling — style_method (select: automatic/manual), badge_bg (color), badge_color (color, col:half pair with badge_bg), badge_radius (unit+slider), badge_font_size (unit+slider), badge_padding_block (unit+slider, default:'5px'), badge_padding_inline (unit+slider, default:'14px'). All manual fields conditional on style_method===manual.
 // get_settings_fields() → export_import section (export/import buttons), data_management section (delete_on_uninstall checkbox)
 ```
 
@@ -101,6 +101,9 @@ src/admin/scss/
 src/admin/fonts/
 ├── Inter-Regular.woff2
 └── Inter-Bold.woff2
+
+src/frontend/scss/
+└── index.scss       — all storefront badge styles (.lwpl-label, shapes, placement, device visibility)
 ```
 
 `index.scss` imports via relative paths (`../../core/scss/variables`), not webpack aliases, to keep SCSS resolution stable.
@@ -134,7 +137,17 @@ React + Shopify Polaris. Entry: `index.js` → imports Polaris CSS + SCSS + `cus
 `LabelsTable.jsx` uses **plain React state** (`useState` + `useCallback` + `useEffect`) for the labels list — not TanStack Query. `loadLabels()` fetches via `fetchLabels()` and stores results in local state; all mutations (delete, duplicate, reorder) call `loadLabels()` in `onSuccess`. Duplicate creates the new label then calls `reorderLabels` to place copy after original. Use `generateUUID()` for new IDs. **TanStack Table** handles rendering with `manualPagination: true`. Columns: drag handle, label name, status, actions (equal `1fr` columns). Sorting uses `useMemo` with `sortConfig` dependency — sort logic must be included or clicking column headers has no effect. ReactSortable uses `forceFallback: true` + `fallbackOnBody: true` — required because `getBoundingClientRect()` returns wrong viewport coords in this page layout context, causing the HTML5 drag ghost to anchor at the top of the viewport. `.sortable-fallback` must be a **top-level** CSS selector (not nested inside `.lime-product-labels-sortable`) because `fallbackOnBody` appends the clone to `<body>`. Actions dropdown: `position-relative` must wrap only the three-dot button div, not the outer flex container — otherwise `right: 0` anchors to the far right of the wide 1fr column and the dropdown appears outside the table.
 
 ### Frontend (`src/frontend/`)
-- `index.js` — stub (Phase 3: badge overlay on product images)
+- `index.js` — imports `../scss/index.scss`; JS bundle is empty (badge rendering is PHP server-side)
+- `scss/index.scss` — all frontend badge styles. CSS class prefix `lwpl-`. Key notes:
+  - `.lwpl-label` is `position:absolute` inside the product image wrapper
+  - `.lwpl-label__text` base defaults: `font-size:14px`, `padding-block:5px`, `padding-inline:14px`, `border-radius:4px`, all overridable via `--lwpl-*` CSS vars (generated only when `style_method=manual`)
+  - **Shape clip-paths are placement-aware** — `tag` and `chevron` use compound selectors combining `&--tag`/`&--chevron` with `&--top-left`/`&--top-right`. Never write a single generic `&--tag .lwpl-label__text` rule.
+  - `tag`: flat anchor edge + V-point protruding on free edge (price-tag style)
+  - `chevron`: flat anchor edge + V-notch cut INTO anchor edge (flag/ribbon style)
+  - `circle`: `border-radius:50%`, `aspect-ratio:1/1`, `padding:10px` — uniform padding required to keep circle round
+  - `burst`: 8-pointed star via 16-point polygon (outer r=50%, inner r=20%), `aspect-ratio:1/1`, `padding:8px`
+  - `shield`: pentagon `polygon(0% 0%, 100% 0%, 100% 65%, 50% 100%, 0% 65%)`, `padding-block-end` enlarged to push text into the rectangular top portion
+  - `corner`: diagonal ribbon; uses `overflow:hidden` + `transform:rotate` on `.lwpl-label__text`; top/left overridden to `0!important`; placement flip handled inside `&--corner.lwpl-label--top-right`
 
 ### Localized data
 Admin receives `window.LimeProductLabels` via `wp_localize_script`: `fields`, `api_namespace`, `rest_nonce`, `option`, `version`.
@@ -150,6 +163,11 @@ SVG files imported in JS/JSX are converted to React components via `@svgr/webpac
 **Applied in:** `includes/Rest/Controller.php`, `src/core/js/api.js`, `src/core/js/contexts/AppContext.js`
 
 URL params `?tab=labels&label_id=<uuid>` (edit) and `?tab=labels&label_mode=create` (create) persist the current label view so page reload restores state instead of dropping to the labels table.
+
+### Frontend badge rendering
+PHP server-side only — no JS badge rendering. `Frontend::lpl_init()` loads active labels (filtered by user condition) and styles on `init`. `render_archive_labels()` / `render_single_labels()` call `get_labels_for_product($product_id)` which checks `check_product_rule()` and `is_product_excluded()` then caches per-product results in a version-keyed transient (`lwpl_p_{id}_{version}[_u{userId}]`, `DAY_IN_SECONDS`). Badge text = label `name` field. `render_label_html($label, $placement)` builds the `<div class="lwpl-label lwpl-label--{shape} lwpl-label--{placement}...">` markup. CSS vars (`--lwpl-*`) are emitted via `wp_add_inline_style` only when `style_method=manual`. The single product gallery gets class `lwpl-gallery-wrap` via `woocommerce_single_product_image_gallery_classes` filter.
+
+Best-sellers: SQL top-N by `total_sales` meta, cached 6h in `lwpl_best_seller_ids` transient, count filterable via `limewoo_lpl_best_seller_count` (default 20). Top-rated threshold: `review_count >= 1 && avg_rating >= 4.0`, filterable via `limewoo_lpl_top_rated_threshold`.
 
 ### Per-product transient cache (future)
 `LabelRepository::get_active_labels()` uses a version-keyed transient (`lwpl_active_labels_v{version}`). Version bumped on every label CRUD via `LabelRepository::bump_cache_version()`. Cache version key: `limewoo_lpl_labels_cache_v`.
