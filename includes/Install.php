@@ -25,9 +25,9 @@ class Install {
 	public static function activate() {
 		self::create_tables();
 
-		update_option( LWPL_OPTION_KEY . '_version', LWPL_VERSION );
+		update_option( LPL_OPTION_KEY . '_version', LPL_VERSION );
 
-		add_option( LWPL_OPTION_KEY . '_installed', time() );
+		add_option( LPL_OPTION_KEY . '_installed', time() );
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Install {
 
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$labels_table = $wpdb->prefix . LWPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$labels_table = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
 
 		$sql = "CREATE TABLE $labels_table (
 			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,

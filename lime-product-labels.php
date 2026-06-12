@@ -53,58 +53,58 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 }
 
 // Define constants.
-if ( ! defined( 'LWPL_VERSION' ) ) {
-	define( 'LWPL_VERSION', '1.0.0' );
+if ( ! defined( 'LPL_VERSION' ) ) {
+	define( 'LPL_VERSION', '1.0.0' );
 }
 
-if ( ! defined( 'LWPL_PLUGIN_FILE' ) ) {
-	define( 'LWPL_PLUGIN_FILE', __FILE__ );
+if ( ! defined( 'LPL_PLUGIN_FILE' ) ) {
+	define( 'LPL_PLUGIN_FILE', __FILE__ );
 }
 
-if ( ! defined( 'LWPL_PLUGIN_PATH' ) ) {
-	define( 'LWPL_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+if ( ! defined( 'LPL_PLUGIN_PATH' ) ) {
+	define( 'LPL_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 }
 
-if ( ! defined( 'LWPL_WOO_SLUG' ) ) {
-	define( 'LWPL_WOO_SLUG', basename( LWPL_PLUGIN_PATH ) );
+if ( ! defined( 'LPL_WOO_SLUG' ) ) {
+	define( 'LPL_WOO_SLUG', basename( LPL_PLUGIN_PATH ) );
 }
 
-if ( ! defined( 'LWPL_PLUGIN_BASENAME' ) ) {
-	define( 'LWPL_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+if ( ! defined( 'LPL_PLUGIN_BASENAME' ) ) {
+	define( 'LPL_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 }
 
-if ( ! defined( 'LWPL_PLUGIN_URL' ) ) {
-	define( 'LWPL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+if ( ! defined( 'LPL_PLUGIN_URL' ) ) {
+	define( 'LPL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 
-if ( ! defined( 'LWPL_BUILD_URL' ) ) {
-	define( 'LWPL_BUILD_URL', LWPL_PLUGIN_URL . 'build/' );
+if ( ! defined( 'LPL_BUILD_URL' ) ) {
+	define( 'LPL_BUILD_URL', LPL_PLUGIN_URL . 'build/' );
 }
 
-if ( ! defined( 'LWPL_NONCE_ACTION' ) ) {
-	define( 'LWPL_NONCE_ACTION', 'LWPL_nonce' );
+if ( ! defined( 'LPL_NONCE_ACTION' ) ) {
+	define( 'LPL_NONCE_ACTION', 'LPL_nonce' );
 }
 
-if ( ! defined( 'LWPL_OPTION_KEY' ) ) {
-	define( 'LWPL_OPTION_KEY', 'lime_product_labels' );
+if ( ! defined( 'LPL_OPTION_KEY' ) ) {
+	define( 'LPL_OPTION_KEY', 'lime_product_labels' );
 }
 
-if ( ! defined( 'LWPL_LABELS_TABLE' ) ) {
-	define( 'LWPL_LABELS_TABLE', 'lime_product_labels' );
+if ( ! defined( 'LPL_LABELS_TABLE' ) ) {
+	define( 'LPL_LABELS_TABLE', 'lime_product_labels' );
 }
 
-if ( ! defined( 'LWPL_DB_VERSION' ) ) {
-	define( 'LWPL_DB_VERSION', '1.0' );
+if ( ! defined( 'LPL_DB_VERSION' ) ) {
+	define( 'LPL_DB_VERSION', '1.0' );
 }
 
 /**
  * Plugin activation/deactivation hooks.
  */
-require_once LWPL_PLUGIN_PATH . 'includes/Install.php';
+require_once LPL_PLUGIN_PATH . 'includes/Install.php';
 
-register_activation_hook( LWPL_PLUGIN_FILE, array( 'LimeProductLabels\Install', 'activate' ) );
+register_activation_hook( LPL_PLUGIN_FILE, array( 'LimeProductLabels\Install', 'activate' ) );
 
-register_deactivation_hook( LWPL_PLUGIN_FILE, array( 'LimeProductLabels\Install', 'deactivate' ) );
+register_deactivation_hook( LPL_PLUGIN_FILE, array( 'LimeProductLabels\Install', 'deactivate' ) );
 
 /**
  * Main plugin class.
@@ -167,7 +167,7 @@ final class LimeProductLabelsMain {
 	 * @since 1.0.0
 	 */
 	private function init() {
-		load_plugin_textdomain( 'lime-product-labels', false, dirname( LWPL_PLUGIN_BASENAME ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
+		load_plugin_textdomain( 'lime-product-labels', false, dirname( LPL_PLUGIN_BASENAME ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
 
 		// Initialize core classes
 		Admin::get_instance();

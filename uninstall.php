@@ -25,5 +25,5 @@ if ( ! empty( $options['settings']['delete_data_on_uninstall'] ) ) {
 
 	// Per-product transients.
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No WP API for wildcard transient deletion; one-time uninstall op.
-	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_lwpl\_p\_%' OR option_name LIKE '\_transient\_timeout\_lwpl\_p\_%'" );
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_lpl\_p\_%' OR option_name LIKE '\_transient\_timeout\_lpl\_p\_%'" );
 }

@@ -35,7 +35,7 @@ class LabelRepository {
 	public static function get_paginated( int $page = 1, int $per_page = 20, string $search = '', string $status = 'all' ) : array {
 		global $wpdb;
 
-		$table  = $wpdb->prefix . LWPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table  = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
 		$page   = max( 1, $page );
 		$offset = ( $page - 1 ) * $per_page;
 
@@ -93,7 +93,7 @@ class LabelRepository {
 	 */
 	public static function get_active_labels() : array {
 		$version       = (int) get_option( self::CACHE_VERSION_KEY, 0 );
-		$transient_key = 'lwpl_active_labels_v' . $version;
+		$transient_key = 'lpl_active_labels_v' . $version;
 		$cached        = get_transient( $transient_key );
 
 		if ( false !== $cached ) {
@@ -102,7 +102,7 @@ class LabelRepository {
 
 		global $wpdb;
 
-		$table = $wpdb->prefix . LWPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant
 		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT data FROM $table WHERE status = %s ORDER BY sort_order ASC, id ASC", 'active' ), ARRAY_A );
@@ -131,7 +131,7 @@ class LabelRepository {
 	public static function get_by_id( string $label_id ) : ?array {
 		global $wpdb;
 
-		$table = $wpdb->prefix . LWPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT data FROM $table WHERE label_id = %s LIMIT 1", $label_id ), ARRAY_A );
@@ -162,7 +162,7 @@ class LabelRepository {
 			return new \WP_Error( 'missing_id', esc_html__( 'Label ID is required.', 'lime-product-labels' ) );
 		}
 
-		$table      = $wpdb->prefix . LWPL_LABELS_TABLE;
+		$table      = $wpdb->prefix . LPL_LABELS_TABLE;
 		$sort_order = self::get_next_sort_order();
 
 		$inserted = $wpdb->insert(
@@ -198,7 +198,7 @@ class LabelRepository {
 	public static function update( string $label_id, array $label ) : bool|\WP_Error {
 		global $wpdb;
 
-		$table = $wpdb->prefix . LWPL_LABELS_TABLE;
+		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
 		$updated = $wpdb->update(
 			$table,
@@ -232,7 +232,7 @@ class LabelRepository {
 	public static function delete( string $label_id ) : bool {
 		global $wpdb;
 
-		$table  = $wpdb->prefix . LWPL_LABELS_TABLE;
+		$table  = $wpdb->prefix . LPL_LABELS_TABLE;
 		$result = $wpdb->delete( $table, array( 'label_id' => $label_id ), array( '%s' ) );
 
 		if ( false !== $result ) {
@@ -253,7 +253,7 @@ class LabelRepository {
 	public static function reorder( array $label_ids ) : bool {
 		global $wpdb;
 
-		$table = $wpdb->prefix . LWPL_LABELS_TABLE;
+		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
 		foreach ( $label_ids as $index => $label_id ) {
 			$wpdb->update(
@@ -280,7 +280,7 @@ class LabelRepository {
 	public static function get_all() : array {
 		global $wpdb;
 
-		$table = $wpdb->prefix . LWPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant
 		$rows = $wpdb->get_results( "SELECT data FROM $table ORDER BY sort_order ASC, id ASC", ARRAY_A );
@@ -307,7 +307,7 @@ class LabelRepository {
 	public static function import_labels( array $labels ) : int {
 		global $wpdb;
 
-		$table  = $wpdb->prefix . LWPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table  = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
 		$count  = 0;
 		$offset = self::get_next_sort_order();
 
@@ -367,7 +367,7 @@ class LabelRepository {
 	private static function get_next_sort_order() : int {
 		global $wpdb;
 
-		$table = $wpdb->prefix . LWPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant
 		$max = $wpdb->get_var( "SELECT MAX(sort_order) FROM $table" );

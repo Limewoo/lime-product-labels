@@ -28,7 +28,7 @@ No PHP test suite exists — `composer run-tests` only runs PHPCS.
 ## PHP Architecture
 
 ### Bootstrap
-`lime-product-labels.php` defines all `LWPL_*` constants, registers activation/deactivation hooks (`Install::activate/deactivate`), and initialises `LimeProductLabelsMain` on `plugins_loaded`. `LimeProductLabelsMain::init()` instantiates the three core singletons in order: `Admin → Controller → Frontend`.
+`lime-product-labels.php` defines all `LPL_*` constants, registers activation/deactivation hooks (`Install::activate/deactivate`), and initialises `LimeProductLabelsMain` on `plugins_loaded`. `LimeProductLabelsMain::init()` instantiates the three core singletons in order: `Admin → Controller → Frontend`.
 
 ### Autoloading
 PSR-4: `LimeProductLabels\` maps to `includes/`. `includes/helpers.php` is autoloaded as a file (global functions). All classes use `use LimeProductLabels\Traits\Singleton` — never call constructors directly; use `ClassName::get_instance()`.
@@ -52,8 +52,8 @@ No License, Updater, or Analytics classes.
 **Styles and settings** live in the `lime_product_labels` wp_option as a JSON object with two keys: `styles{}`, `settings{}`. Read via `limewoo_lpl_get_option_data()` which is statically memoized per request.
 
 **Constants:**
-- `LWPL_LABELS_TABLE` → `'lime_product_labels'` (without `$wpdb->prefix`)
-- `LWPL_OPTION_KEY` → `'lime_product_labels'`
+- `LPL_LABELS_TABLE` → `'lime_product_labels'` (without `$wpdb->prefix`)
+- `LPL_OPTION_KEY` → `'lime_product_labels'`
 
 ### Label fields
 ```php
@@ -71,7 +71,7 @@ No License, Updater, or Analytics classes.
 **`shape-select` field type:** custom type handled in `RenderFields.jsx` → `ShapeSelect.jsx`. Renders a grid of SVG shape buttons. SVGs live in `src/admin/images/shapes/` (8 text shapes: badge, tag, chevron, circle, banner, corner, burst, shield). `attributes.shape_type` selects which set to show (currently only `text`). Do NOT use `group` type for user condition fields — this plugin has no `GroupFields` renderer.
 
 ### PHPCS rules
-- Required prefixes: `limewoo, LimeProductLabels`
+- Required prefixes: `limewoo, LimeProductLabels, lpl, LPL`
 - Text domain: `lime-product-labels`
 - Excluded sniffs: `WordPress.Files.FileName.NotHyphenatedLowercase`, `Core.Commenting.CommentTags.AuthorTag`
 - PHP 8.0+ target (`testVersion = "8.0-"`)
@@ -103,7 +103,7 @@ src/admin/fonts/
 └── Inter-Bold.woff2
 
 src/frontend/scss/
-└── index.scss       — all storefront badge styles (.lwpl-label, shapes, placement, device visibility)
+└── index.scss       — all storefront badge styles (.lpl-label, shapes, placement, device visibility)
 ```
 
 `index.scss` imports via relative paths (`../../core/scss/variables`), not webpack aliases, to keep SCSS resolution stable.
@@ -138,16 +138,16 @@ React + Shopify Polaris. Entry: `index.js` → imports Polaris CSS + SCSS + `cus
 
 ### Frontend (`src/frontend/`)
 - `index.js` — imports `../scss/index.scss`; JS bundle is empty (badge rendering is PHP server-side)
-- `scss/index.scss` — all frontend badge styles. CSS class prefix `lwpl-`. Key notes:
-  - `.lwpl-label` is `position:absolute` inside the product image wrapper
-  - `.lwpl-label__text` base defaults: `font-size:14px`, `padding-block:5px`, `padding-inline:14px`, `border-radius:4px`, all overridable via `--lwpl-*` CSS vars (generated only when `style_method=manual`)
-  - **Shape clip-paths are placement-aware** — `tag` and `chevron` use compound selectors combining `&--tag`/`&--chevron` with `&--top-left`/`&--top-right`. Never write a single generic `&--tag .lwpl-label__text` rule.
+- `scss/index.scss` — all frontend badge styles. CSS class prefix `lpl-`. Key notes:
+  - `.lpl-label` is `position:absolute` inside the product image wrapper
+  - `.lpl-label__text` base defaults: `font-size:14px`, `padding-block:5px`, `padding-inline:14px`, `border-radius:4px`, all overridable via `--lpl-*` CSS vars (generated only when `style_method=manual`)
+  - **Shape clip-paths are placement-aware** — `tag` and `chevron` use compound selectors combining `&--tag`/`&--chevron` with `&--top-left`/`&--top-right`. Never write a single generic `&--tag .lpl-label__text` rule.
   - `tag`: flat anchor edge + V-point protruding on free edge (price-tag style)
   - `chevron`: flat anchor edge + V-notch cut INTO anchor edge (flag/ribbon style)
   - `circle`: `border-radius:50%`, `aspect-ratio:1/1`, `padding:10px` — uniform padding required to keep circle round
   - `burst`: 8-pointed star via 16-point polygon (outer r=50%, inner r=20%), `aspect-ratio:1/1`, `padding:8px`
   - `shield`: pentagon `polygon(0% 0%, 100% 0%, 100% 65%, 50% 100%, 0% 65%)`, `padding-block-end` enlarged to push text into the rectangular top portion
-  - `corner`: diagonal ribbon; uses `overflow:hidden` + `transform:rotate` on `.lwpl-label__text`; top/left overridden to `0!important`; placement flip handled inside `&--corner.lwpl-label--top-right`
+  - `corner`: diagonal ribbon; uses `overflow:hidden` + `transform:rotate` on `.lpl-label__text`; top/left overridden to `0!important`; placement flip handled inside `&--corner.lpl-label--top-right`
 
 ### Localized data
 Admin receives `window.LimeProductLabels` via `wp_localize_script`: `fields`, `api_namespace`, `rest_nonce`, `option`, `version`.
@@ -165,12 +165,12 @@ SVG files imported in JS/JSX are converted to React components via `@svgr/webpac
 URL params `?tab=labels&label_id=<uuid>` (edit) and `?tab=labels&label_mode=create` (create) persist the current label view so page reload restores state instead of dropping to the labels table.
 
 ### Frontend badge rendering
-PHP server-side only — no JS badge rendering. `Frontend::lpl_init()` loads active labels (filtered by user condition) and styles on `init`. `render_archive_labels()` / `render_single_labels()` call `get_labels_for_product($product_id)` which checks `check_product_rule()` and `is_product_excluded()` then caches per-product results in a version-keyed transient (`lwpl_p_{id}_{version}[_u{userId}]`, `DAY_IN_SECONDS`). Badge text = label `name` field. `render_label_html($label, $placement)` builds the `<div class="lwpl-label lwpl-label--{shape} lwpl-label--{placement}...">` markup. CSS vars (`--lwpl-*`) are emitted via `wp_add_inline_style` only when `style_method=manual`. The single product gallery gets class `lwpl-gallery-wrap` via `woocommerce_single_product_image_gallery_classes` filter.
+PHP server-side only — no JS badge rendering. `Frontend::lpl_init()` loads active labels (filtered by user condition) and styles on `init`. `render_archive_labels()` / `render_single_labels()` call `get_labels_for_product($product_id)` which checks `check_product_rule()` and `is_product_excluded()` then caches per-product results in a version-keyed transient (`lpl_p_{id}_{version}[_u{userId}]`, `DAY_IN_SECONDS`). Badge text = label `name` field. `render_label_html($label, $placement)` builds the `<div class="lpl-label lpl-label--{shape} lpl-label--{placement}...">` markup. CSS vars (`--lpl-*`) are emitted via `wp_add_inline_style` only when `style_method=manual`. The single product gallery gets class `lpl-gallery-wrap` via `woocommerce_single_product_image_gallery_classes` filter.
 
-Best-sellers: SQL top-N by `total_sales` meta, cached 6h in `lwpl_best_seller_ids` transient, count filterable via `limewoo_lpl_best_seller_count` (default 20). Top-rated threshold: `review_count >= 1 && avg_rating >= 4.0`, filterable via `limewoo_lpl_top_rated_threshold`.
+Best-sellers: SQL top-N by `total_sales` meta, cached 6h in `lpl_best_seller_ids` transient, count filterable via `limewoo_lpl_best_seller_count` (default 20). Top-rated threshold: `review_count >= 1 && avg_rating >= 4.0`, filterable via `limewoo_lpl_top_rated_threshold`.
 
 ### Per-product transient cache (future)
-`LabelRepository::get_active_labels()` uses a version-keyed transient (`lwpl_active_labels_v{version}`). Version bumped on every label CRUD via `LabelRepository::bump_cache_version()`. Cache version key: `limewoo_lpl_labels_cache_v`.
+`LabelRepository::get_active_labels()` uses a version-keyed transient (`lpl_active_labels_v{version}`). Version bumped on every label CRUD via `LabelRepository::bump_cache_version()`. Cache version key: `limewoo_lpl_labels_cache_v`.
 
 ### Label status toggle
 Toggle sends the **full label object** with toggled status — `LabelRepository::update` writes the full `data` JSON column, so a partial payload would corrupt other fields.
@@ -182,4 +182,4 @@ This plugin is free for wp.org. No license checks, no analytics tracking, no rep
 `renderApp.js` uses `createRoot` from `@wordpress/element`. Never use the legacy `render` from `@wordpress/element` — that triggers the React 17 fallback warning in React 18.
 
 ### Clone of limewoo-bxgy (stripped)
-This plugin is intentionally structured as a near-clone of `limewoo-bxgy`. When adding new UI features, model them on the equivalent bxgy component. Removed from bxgy: License, Updater, Analytics, Reports, UseCases, campaign variants. Renamed: campaigns→labels, widget→styles, `LWBXGY_`→`LWPL_`, `LimewooBXGY`→`LimeProductLabels`, `limewoo_bxgy_`→`limewoo_lpl_`.
+This plugin is intentionally structured as a near-clone of `limewoo-bxgy`. When adding new UI features, model them on the equivalent bxgy component. Removed from bxgy: License, Updater, Analytics, Reports, UseCases, campaign variants. Renamed: campaigns→labels, widget→styles, `LWBXGY_`→`LPL_`, `LimewooBXGY`→`LimeProductLabels`, `limewoo_bxgy_`→`limewoo_lpl_`.

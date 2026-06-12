@@ -21,7 +21,7 @@ if ( ! function_exists( 'limewoo_lpl_get_option_data' ) ) {
 		static $data = null;
 
 		if ( is_null( $data ) ) {
-			$data = get_option( LWPL_OPTION_KEY, array() );
+			$data = get_option( LPL_OPTION_KEY, array() );
 		}
 
 		return is_null( $key ) ? $data : ( $data[ $key ] ?? array() );

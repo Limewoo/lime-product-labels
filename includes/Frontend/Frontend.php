@@ -24,7 +24,7 @@ class Frontend {
 	/**
 	 * Transient key for cached bestseller product IDs.
 	 */
-	const BEST_SELLER_TRANSIENT = 'lwpl_best_seller_ids';
+	const BEST_SELLER_TRANSIENT = 'lpl_best_seller_ids';
 
 	/**
 	 * Number of top products that qualify as bestsellers (filterable).
@@ -52,7 +52,7 @@ class Frontend {
 	 */
 	private function __construct() {
 		// Clear per-product transients when labels or styles change.
-		add_action( 'update_option_' . LWPL_OPTION_KEY, array( $this, 'clear_all_label_cache' ) );
+		add_action( 'update_option_' . LPL_OPTION_KEY, array( $this, 'clear_all_label_cache' ) );
 		add_action( 'update_option_' . LabelRepository::CACHE_VERSION_KEY, array( $this, 'clear_all_label_cache' ) );
 		add_action( 'woocommerce_update_product', array( $this, 'clear_product_label_cache' ) );
 		add_action( 'set_object_terms', array( $this, 'maybe_clear_cache_on_terms_change' ), 10, 4 );
@@ -114,7 +114,7 @@ class Frontend {
 			return;
 		}
 
-		$asset_file = LWPL_PLUGIN_PATH . 'build/frontend/index.asset.php';
+		$asset_file = LPL_PLUGIN_PATH . 'build/frontend/index.asset.php';
 
 		if ( ! file_exists( $asset_file ) ) {
 			return;
@@ -124,7 +124,7 @@ class Frontend {
 
 		wp_enqueue_style(
 			'lime-product-labels-frontend',
-			LWPL_BUILD_URL . 'frontend/index.css',
+			LPL_BUILD_URL . 'frontend/index.css',
 			array_filter(
 				$asset['dependencies'] ?? array(),
 				function ( $dep ) {
@@ -149,7 +149,7 @@ class Frontend {
 	 * @return array
 	 */
 	public function add_gallery_class( $classes ) {
-		$classes[] = 'lwpl-gallery-wrap';
+		$classes[] = 'lpl-gallery-wrap';
 
 		return $classes;
 	}
@@ -243,9 +243,9 @@ class Frontend {
 		$device_class = '';
 
 		if ( $has_desktop && ! $has_mobile ) {
-			$device_class = 'lwpl-label--desktop-only';
+			$device_class = 'lpl-label--desktop-only';
 		} elseif ( ! $has_desktop && $has_mobile ) {
-			$device_class = 'lwpl-label--mobile-only';
+			$device_class = 'lpl-label--mobile-only';
 		}
 
 		$label_shape = $label['label_shape'] ?? 'text-shape-badge';
@@ -256,9 +256,9 @@ class Frontend {
 				' ',
 				array_filter(
 					array(
-						'lwpl-label',
-						'lwpl-label--' . $shape_key,
-						'lwpl-label--' . str_replace( '_', '-', $placement ),
+						'lpl-label',
+						'lpl-label--' . $shape_key,
+						'lpl-label--' . str_replace( '_', '-', $placement ),
 						$device_class,
 					)
 				)
@@ -266,7 +266,7 @@ class Frontend {
 		);
 
 		return sprintf(
-			'<div class="%s"><span class="lwpl-label__text">%s</span></div>',
+			'<div class="%s"><span class="lpl-label__text">%s</span></div>',
 			esc_attr( $classes ),
 			esc_html( $name )
 		);
@@ -300,7 +300,7 @@ class Frontend {
 					continue;
 				}
 				$vars[] = sprintf(
-					'--lwpl-%s: %s;',
+					'--lpl-%s: %s;',
 					str_replace( '_', '-', $key ),
 					esc_attr( $value )
 				);
@@ -343,7 +343,7 @@ class Frontend {
 		);
 		$user_suffix   = $has_user_conditions ? '_u' . get_current_user_id() : '';
 		$version       = (int) get_option( LabelRepository::CACHE_VERSION_KEY, 0 );
-		$transient_key = 'lwpl_p_' . $product_id . '_' . $version . $user_suffix;
+		$transient_key = 'lpl_p_' . $product_id . '_' . $version . $user_suffix;
 
 		$cached = get_transient( $transient_key );
 		if ( false !== $cached ) {
@@ -713,7 +713,7 @@ class Frontend {
 	 */
 	public function clear_product_label_cache( $product_id ) {
 		$version = (int) get_option( LabelRepository::CACHE_VERSION_KEY, 0 );
-		delete_transient( 'lwpl_p_' . (int) $product_id . '_' . $version );
+		delete_transient( 'lpl_p_' . (int) $product_id . '_' . $version );
 		delete_transient( self::BEST_SELLER_TRANSIENT );
 	}
 

@@ -47,7 +47,7 @@ class Admin {
 			return;
 		}
 
-		$asset_file = LWPL_PLUGIN_PATH . 'build/admin/index.asset.php';
+		$asset_file = LPL_PLUGIN_PATH . 'build/admin/index.asset.php';
 
 		if ( ! file_exists( $asset_file ) ) {
 			return;
@@ -57,7 +57,7 @@ class Admin {
 
 		wp_enqueue_style(
 			'lime-product-labels-admin',
-			LWPL_BUILD_URL . 'admin/index.css',
+			LPL_BUILD_URL . 'admin/index.css',
 			array_filter(
 				$asset['dependencies'],
 				function ( $style ) {
@@ -69,7 +69,7 @@ class Admin {
 
 		wp_enqueue_script(
 			'lime-product-labels-admin',
-			LWPL_BUILD_URL . 'admin/index.js',
+			LPL_BUILD_URL . 'admin/index.js',
 			$asset['dependencies'],
 			$asset['version'],
 			array(
@@ -78,12 +78,12 @@ class Admin {
 		);
 
 		$obj = array(
-			'version'       => LWPL_VERSION,
+			'version'       => LPL_VERSION,
 			'rest_path'     => esc_attr( '/wp/v2/settings' ),
 			'api_namespace' => esc_attr( Controller::API_NAMESPACE ),
 			'ajax_url'      => admin_url( 'admin-ajax.php' ),
 			'rest_nonce'    => wp_create_nonce( 'wp_rest' ),
-			'option'        => LWPL_OPTION_KEY,
+			'option'        => LPL_OPTION_KEY,
 			'fields'        => Fields::get_all_fields(),
 		);
 
@@ -102,6 +102,6 @@ class Admin {
 			$localized_data,
 		);
 
-		wp_set_script_translations( 'lime-product-labels-admin', 'lime-product-labels', LWPL_PLUGIN_PATH . 'languages' );
+		wp_set_script_translations( 'lime-product-labels-admin', 'lime-product-labels', LPL_PLUGIN_PATH . 'languages' );
 	}
 }

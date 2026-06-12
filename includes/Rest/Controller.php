@@ -60,7 +60,7 @@ class Controller {
 
 		register_setting(
 			'options',
-			LWPL_OPTION_KEY,
+			LPL_OPTION_KEY,
 			array(
 				'type'              => 'object',
 				'default'           => self::get_default_options(),
@@ -803,7 +803,7 @@ class Controller {
 		}
 
 		$data = array(
-			'version'     => LWPL_VERSION,
+			'version'     => LPL_VERSION,
 			'export_date' => current_time( 'mysql', true ),
 			'site_url'    => esc_url_raw( get_site_url() ),
 			'labels'      => $labels,

@@ -5,11 +5,11 @@ ul.products li.product,
 }
 
 // Single product gallery wrapper gets this class via PHP filter.
-.lwpl-gallery-wrap {
+.lpl-gallery-wrap {
 	position: relative;
 }
 
-.lwpl-label {
+.lpl-label {
 	position: absolute;
 	z-index: 10;
 	pointer-events: none;
@@ -47,14 +47,14 @@ ul.products li.product,
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		background: var( --lwpl-badge-bg, #1a1a1a );
-		color: var( --lwpl-badge-color, #ffffff );
-		font-size: var( --lwpl-badge-font-size, 14px );
-		border-radius: var( --lwpl-badge-radius, 4px );
-		width: var( --lwpl-badge-width, auto );
-		height: var( --lwpl-badge-height, auto );
-		padding-block: var( --lwpl-badge-padding-block, 5px );
-		padding-inline: var( --lwpl-badge-padding-inline, 14px );
+		background: var( --lpl-badge-bg, #1a1a1a );
+		color: var( --lpl-badge-color, #ffffff );
+		font-size: var( --lpl-badge-font-size, 14px );
+		border-radius: var( --lpl-badge-radius, 4px );
+		width: var( --lpl-badge-width, auto );
+		height: var( --lpl-badge-height, auto );
+		padding-block: var( --lpl-badge-padding-block, 5px );
+		padding-inline: var( --lpl-badge-padding-inline, 14px );
 		font-weight: 600;
 		white-space: nowrap;
 		line-height: 1.4;
@@ -71,48 +71,48 @@ ul.products li.product,
 	// shield  → shield / hexagon
 
 	// tag: left-pointing arrow on anchor edge (top-left placement)
-	&--tag.lwpl-label--top-left .lwpl-label__text {
+	&--tag.lpl-label--top-left .lpl-label__text {
 		clip-path: polygon( 10px 0, 100% 0, 100% 100%, 10px 100%, 0 50% );
 		padding-inline-start: 20px;
 		border-radius: 0 2px 2px 0;
 	}
 
 	// tag: right-pointing arrow on anchor edge (top-right placement)
-	&--tag.lwpl-label--top-right .lwpl-label__text {
+	&--tag.lpl-label--top-right .lpl-label__text {
 		clip-path: polygon( 0 0, calc( 100% - 10px ) 0, 100% 50%, calc( 100% - 10px ) 100%, 0 100% );
 		padding-inline-end: 20px;
 		border-radius: 2px 0 0 2px;
 	}
 
 	// chevron: V-notch on anchor (left) edge (top-left placement)
-	&--chevron.lwpl-label--top-left .lwpl-label__text {
+	&--chevron.lpl-label--top-left .lpl-label__text {
 		clip-path: polygon( 0 0, 100% 0, 100% 100%, 0 100%, 12px 50% );
 		padding-inline-start: 20px;
 		border-radius: 0;
 	}
 
 	// chevron: V-notch on anchor (right) edge (top-right placement)
-	&--chevron.lwpl-label--top-right .lwpl-label__text {
+	&--chevron.lpl-label--top-right .lpl-label__text {
 		clip-path: polygon( 0 0, 100% 0, calc( 100% - 12px ) 50%, 100% 100%, 0 100% );
 		padding-inline-end: 20px;
 		border-radius: 0;
 	}
 
-	&--circle .lwpl-label__text {
+	&--circle .lpl-label__text {
 		border-radius: 50%;
 		aspect-ratio: 1 / 1;
 		min-width: 44px;
 		padding: 10px;
 	}
 
-	&--banner .lwpl-label__text {
+	&--banner .lpl-label__text {
 		border-radius: 0;
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
 		font-size: 11px;
 	}
 
-	&--burst .lwpl-label__text {
+	&--burst .lpl-label__text {
 		border-radius: 0;
 		aspect-ratio: 1 / 1;
 		min-width: 52px;
@@ -138,17 +138,17 @@ ul.products li.product,
 		);
 	}
 
-	&--shield .lwpl-label__text {
+	&--shield .lpl-label__text {
 		border-radius: 0;
 		min-width: 44px;
-		padding-inline: var( --lwpl-badge-padding-inline, 10px );
-		padding-block-start: var( --lwpl-badge-padding-block, 5px );
-		padding-block-end: calc( var( --lwpl-badge-padding-block, 5px ) + 20px );
+		padding-inline: var( --lpl-badge-padding-inline, 10px );
+		padding-block-start: var( --lpl-badge-padding-block, 5px );
+		padding-block-end: calc( var( --lpl-badge-padding-block, 5px ) + 20px );
 		clip-path: polygon( 0% 0%, 100% 0%, 100% 65%, 50% 100%, 0% 65% );
 	}
 
 	// Corner ribbon: displayed as a diagonal ribbon anchored to a corner.
-	// The .lwpl-label wrapper acts as a clipping box; the text is rotated inside.
+	// The .lpl-label wrapper acts as a clipping box; the text is rotated inside.
 	&--corner {
 		overflow: hidden;
 		top: 0 !important;
@@ -156,12 +156,12 @@ ul.products li.product,
 		width: 64px;
 		height: 64px;
 
-		&.lwpl-label--top-right {
+		&.lpl-label--top-right {
 			left: auto !important;
 			right: 0 !important;
 		}
 
-		.lwpl-label__text {
+		.lpl-label__text {
 			position: absolute;
 			top: 14px;
 			left: -18px;
@@ -175,7 +175,7 @@ ul.products li.product,
 			transform-origin: center center;
 		}
 
-		&.lwpl-label--top-right .lwpl-label__text {
+		&.lpl-label--top-right .lpl-label__text {
 			left: auto;
 			right: -18px;
 			transform: rotate( 45deg );
