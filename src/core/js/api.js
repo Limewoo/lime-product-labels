@@ -226,3 +226,14 @@ export const importLabels = async ( fileContent ) => {
 		data: { file: fileContent },
 	} );
 };
+
+export const uploadMedia = async ( file ) => {
+	const formData = new FormData();
+	formData.append( 'file', file );
+
+	return await apiFetch( {
+		path: '/wp/v2/media',
+		method: 'POST',
+		body: formData,
+	} );
+};

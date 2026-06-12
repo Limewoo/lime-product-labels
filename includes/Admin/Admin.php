@@ -55,6 +55,9 @@ class Admin {
 
 		$asset = include $asset_file;
 
+		// WP media library modal — used by the 'media' field type (label image).
+		wp_enqueue_media();
+
 		wp_enqueue_style(
 			'lime-product-labels-admin',
 			LPL_BUILD_URL . 'admin/index.css',

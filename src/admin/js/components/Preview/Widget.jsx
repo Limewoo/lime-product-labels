@@ -45,6 +45,7 @@ const CSS_VAR_FIELDS = [
 	'badge_padding_inline',
 	'badge_gap_horizontal',
 	'badge_gap_vertical',
+	'badge_image_width',
 ];
 
 const Widget = ( { formData = {} } ) => {
@@ -56,6 +57,8 @@ const Widget = ( { formData = {} } ) => {
 
 	const {
 		name,
+		label_type = 'text',
+		label_image,
 		label_shape = 'text-shape-badge',
 		product_page_placement = 'top_left',
 	} = isStylesMode ? {} : formData;
@@ -64,8 +67,10 @@ const Widget = ( { formData = {} } ) => {
 	const styleMethod = stylesData?.style_method || 'automatic';
 
 	const labelName = name || __( 'Label', 'lime-product-labels' );
+	const isImageLabel = ! isStylesMode && label_type === 'image';
+	const imageUrl = label_image?.url || '';
 	const activeShape = isStylesMode ? previewShape : label_shape;
-	const shape = SHAPE_MAP[ activeShape ] || 'badge';
+	const shape = isImageLabel ? 'image' : ( SHAPE_MAP[ activeShape ] || 'badge' );
 	const placementMod = ( product_page_placement || 'top_left' ).replace( '_', '-' );
 	const badgeClasses = `lpl-label lpl-label--${ shape } lpl-label--${ placementMod }`;
 
@@ -88,9 +93,15 @@ const Widget = ( { formData = {} } ) => {
 						<div className="flex items-end gap-ml">
 							<div className="position-relative">
 								<SkeletonThumbnail size="large" />
-								<div className={ badgeClasses }>
-									<span className="lpl-label__text">{ labelName }</span>
-								</div>
+								{ ( ! isImageLabel || imageUrl ) && (
+									<div className={ badgeClasses }>
+										{ isImageLabel ? (
+											<img className="lpl-label__image" src={ imageUrl } alt={ labelName } />
+										) : (
+											<span className="lpl-label__text">{ labelName }</span>
+										) }
+									</div>
+								) }
 							</div>
 							<div className="flex-grow flex flex-col gap-md">
 								<SkeletonBodyText />

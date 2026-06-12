@@ -60,6 +60,19 @@ ul.products li.product,
 		line-height: 1.4;
 	}
 
+	// ── Image label ───────────────────────────────────────────────────────────
+	// !important required: WooCommerce's `.woocommerce-js div.product div.images img`
+	// (0,3,3) sets width:100% on every img inside the gallery and outranks any
+	// class-only selector we can write here.
+
+	&--image .lpl-label__image {
+		display: block;
+		width: var( --lpl-badge-image-width, 80px ) !important;
+		max-width: 100% !important;
+		height: auto !important;
+		box-shadow: none;
+	}
+
 	// ── Shapes ────────────────────────────────────────────────────────────────
 	// badge   → default rounded rect (border-radius controlled via CSS var)
 	// tag     → price-tag: flat on anchor edge, arrow on free edge

@@ -671,6 +671,31 @@ class Fields {
 							),
 						),
 					),
+					array(
+						'id'         => 'label_image',
+						'type'       => 'media',
+						'label'      => esc_html__( 'Label image', 'lime-product-labels' ),
+						'desc'       => esc_html__( 'PNG or JPG. SVG also works if your site allows SVG uploads.', 'lime-product-labels' ),
+						'default'    => '',
+						'conditions' => array(
+							'logic' => 'AND',
+							'rules' => array(
+								array(
+									'field'    => 'label_type',
+									'operator' => '===',
+									'value'    => 'image',
+								),
+							),
+						),
+						'schema'     => array(
+							'type'       => 'object',
+							'properties' => array(
+								'id'  => array( 'type' => 'integer' ),
+								'url' => array( 'type' => 'string' ),
+								'alt' => array( 'type' => 'string' ),
+							),
+						),
+					),
 				),
 			),
 
@@ -995,6 +1020,40 @@ class Fields {
 							),
 						),
 						'default'    => '',
+						'css_var'    => true,
+						'conditions' => $manual_condition,
+						'schema'     => array( 'type' => 'string' ),
+					),
+					array(
+						'id'         => 'badge_image_width',
+						'type'       => 'unit',
+						'slider'     => true,
+						'label'      => esc_html__( 'Image width', 'lime-product-labels' ),
+						'desc'       => esc_html__( 'Applies to image-type labels.', 'lime-product-labels' ),
+						'attributes' => array(
+							'min'   => 0,
+							'max'   => 300,
+							'step'  => 1,
+							'units' => array(
+								array(
+									'label' => 'px',
+									'value' => 'px',
+								),
+								array(
+									'label' => '%',
+									'value' => '%',
+								),
+								array(
+									'label' => 'em',
+									'value' => 'em',
+								),
+								array(
+									'label' => 'rem',
+									'value' => 'rem',
+								),
+							),
+						),
+						'default'    => '80px',
 						'css_var'    => true,
 						'conditions' => $manual_condition,
 						'schema'     => array( 'type' => 'string' ),

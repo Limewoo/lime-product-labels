@@ -27,6 +27,7 @@ import ShapeSelect from './ShapeSelect';
 import ColorSelect from './ColorSelect';
 import UnitSelect from './UnitSelect';
 import ButtonField from './ButtonField';
+import MediaUpload from './MediaUpload';
 
 const RenderFields = ( props ) => {
 	const {
@@ -257,6 +258,10 @@ const RenderFields = ( props ) => {
 
 			case 'unit':
 				fieldComponent = <UnitSelect { ...fieldProps } />;
+				break;
+
+			case 'media':
+				fieldComponent = <MediaUpload { ...fieldProps } />;
 				break;
 
 			case 'shape-select':

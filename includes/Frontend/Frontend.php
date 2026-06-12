@@ -221,16 +221,7 @@ class Frontend {
 	 */
 	private static function render_label_html( array $label, string $placement ) {
 		$label_type = $label['label_type'] ?? 'text';
-
-		// Image type not yet implemented (no image-upload field in schema).
-		if ( 'image' === $label_type ) {
-			return '';
-		}
-
-		$name = trim( $label['name'] ?? '' );
-		if ( '' === $name ) {
-			return '';
-		}
+		$name       = trim( $label['name'] ?? '' );
 
 		// Device visibility.
 		$show_on_devices = $label['show_on_devices'] ?? array( 'desktop', 'mobile' );
@@ -248,6 +239,53 @@ class Frontend {
 			$device_class = 'lpl-label--mobile-only';
 		}
 
+		$placement_class = 'lpl-label--' . str_replace( '_', '-', $placement );
+
+		if ( 'image' === $label_type ) {
+			$image    = is_array( $label['label_image'] ?? null ) ? $label['label_image'] : array();
+			$image_id = absint( $image['id'] ?? 0 );
+			$url      = $image_id ? wp_get_attachment_image_url( $image_id, 'full' ) : '';
+
+			// Attachment may have been deleted — fall back to the stored URL.
+			if ( ! $url && ! empty( $image['url'] ) ) {
+				$url = $image['url'];
+			}
+
+			if ( ! $url ) {
+				return '';
+			}
+
+			$alt = trim( $image['alt'] ?? '' );
+			if ( '' === $alt ) {
+				$alt = $name;
+			}
+
+			$classes = trim(
+				implode(
+					' ',
+					array_filter(
+						array(
+							'lpl-label',
+							'lpl-label--image',
+							$placement_class,
+							$device_class,
+						)
+					)
+				)
+			);
+
+			return sprintf(
+				'<div class="%s"><img class="lpl-label__image" src="%s" alt="%s" loading="lazy" /></div>',
+				esc_attr( $classes ),
+				esc_url( $url ),
+				esc_attr( $alt )
+			);
+		}
+
+		if ( '' === $name ) {
+			return '';
+		}
+
 		$label_shape = $label['label_shape'] ?? 'text-shape-badge';
 		$shape_key   = str_replace( 'text-shape-', '', $label_shape ); // e.g. 'badge', 'circle'
 
@@ -258,7 +296,7 @@ class Frontend {
 					array(
 						'lpl-label',
 						'lpl-label--' . $shape_key,
-						'lpl-label--' . str_replace( '_', '-', $placement ),
+						$placement_class,
 						$device_class,
 					)
 				)
