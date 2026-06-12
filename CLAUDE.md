@@ -64,7 +64,7 @@ No License, Updater, or Analytics classes.
 // Section: placement_and_visibility — show_on_pages (checkbox: product/archive), product_page_placement (select: top_left/top_right), archive_page_placement (select: top_left/top_right), show_on_devices (checkbox: desktop/mobile)
 // Section: label_design — label_type (select: text/image, default: text), label_shape (shape-select, conditional on label_type=text, default: text-shape-badge)
 // Section: advanced — user_rule, user_selection_type, selected_users (data_source:users), selected_user_roles (data_source:user_roles) — flat fields, NOT group type (no GroupFields renderer exists)
-// get_styles_fields() → section: label_styling — style_method (select: automatic/manual), badge_bg (color), badge_color (color, col:half pair with badge_bg), badge_radius (unit+slider), badge_font_size (unit+slider), badge_padding_block (unit+slider, default:'5px'), badge_padding_inline (unit+slider, default:'14px'). All manual fields conditional on style_method===manual.
+// get_styles_fields() → section: label_styling — style_method (select: automatic/manual), badge_bg (color), badge_color (color), badge_radius (unit+slider), badge_font_size (unit+slider), badge_width (unit+slider, clearable=Auto, default:''), badge_height (unit+slider, clearable=Auto, default:'', no %), badge_padding_block (unit+slider, default:'5px'), badge_padding_inline (unit+slider, default:'14px'), badge_gap_horizontal (unit+slider, default:'10px'), badge_gap_vertical (unit+slider, default:'10px'). All fields full width (no col:half). All manual fields conditional on style_method===manual, all have css_var:true.
 // get_settings_fields() → export_import section (export/import buttons), data_management section (delete_on_uninstall checkbox)
 ```
 
@@ -147,7 +147,8 @@ React + Shopify Polaris. Entry: `index.js` → imports Polaris CSS + SCSS + `cus
   - `circle`: `border-radius:50%`, `aspect-ratio:1/1`, `padding:10px` — uniform padding required to keep circle round
   - `burst`: 8-pointed star via 16-point polygon (outer r=50%, inner r=20%), `aspect-ratio:1/1`, `padding:8px`
   - `shield`: pentagon `polygon(0% 0%, 100% 0%, 100% 65%, 50% 100%, 0% 65%)`, `padding-block-end` enlarged to push text into the rectangular top portion
-  - `corner`: diagonal ribbon; uses `overflow:hidden` + `transform:rotate` on `.lpl-label__text`; top/left overridden to `0!important`; placement flip handled inside `&--corner.lpl-label--top-right`
+  - `banner`: wide diagonal ribbon crossing the corner — 90px `overflow:hidden` square wrapper, 150px rotated text band so both ends bleed off the edges; top/left overridden to `0!important`; placement flip inside `&--banner.lpl-label--top-right`
+  - `corner`: solid triangle filling the corner — triangle painted by `::before` on the wrapper (`clip-path: polygon(0 0, 100% 0, 0 100%)`, bg from `--lpl-badge-bg`) because a rotated text span can't carry an unrotated clip-path; `.lpl-label__text` is transparent and rotated on top; placement flip inside `&--corner.lpl-label--top-right`
 
 ### Localized data
 Admin receives `window.LimeProductLabels` via `wp_localize_script`: `fields`, `api_namespace`, `rest_nonce`, `option`, `version`.

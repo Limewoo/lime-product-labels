@@ -1,22 +1,96 @@
+import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Box, BlockStack, SkeletonDisplayText, SkeletonBodyText, SkeletonThumbnail } from '@shopify/polaris';
+import { Box, BlockStack, SkeletonBodyText, SkeletonDisplayText, SkeletonThumbnail } from '@shopify/polaris';
+import useAppStore from '@coreJS/hooks/useAppStore';
+
+import TextShapeBadge   from '@adminImages/shapes/text-shape-badge.svg';
+import TextShapeTag     from '@adminImages/shapes/text-shape-tag.svg';
+import TextShapeChevron from '@adminImages/shapes/text-shape-chevron.svg';
+import TextShapeCircle  from '@adminImages/shapes/text-shape-circle.svg';
+import TextShapeBanner  from '@adminImages/shapes/text-shape-banner.svg';
+import TextShapeCorner  from '@adminImages/shapes/text-shape-corner.svg';
+import TextShapeBurst   from '@adminImages/shapes/text-shape-burst.svg';
+import TextShapeShield  from '@adminImages/shapes/text-shape-shield.svg';
+
+const SHAPES = [
+	{ value: 'text-shape-badge',   component: TextShapeBadge },
+	{ value: 'text-shape-tag',     component: TextShapeTag },
+	{ value: 'text-shape-chevron', component: TextShapeChevron },
+	{ value: 'text-shape-circle',  component: TextShapeCircle },
+	{ value: 'text-shape-banner',  component: TextShapeBanner },
+	{ value: 'text-shape-corner',  component: TextShapeCorner },
+	{ value: 'text-shape-burst',   component: TextShapeBurst },
+	{ value: 'text-shape-shield',  component: TextShapeShield },
+];
+
+const SHAPE_MAP = {
+	'text-shape-badge':   'badge',
+	'text-shape-tag':     'tag',
+	'text-shape-chevron': 'chevron',
+	'text-shape-circle':  'circle',
+	'text-shape-banner':  'banner',
+	'text-shape-corner':  'corner',
+	'text-shape-burst':   'burst',
+	'text-shape-shield':  'shield',
+};
+
+const CSS_VAR_FIELDS = [
+	'badge_bg',
+	'badge_color',
+	'badge_font_size',
+	'badge_radius',
+	'badge_width',
+	'badge_height',
+	'badge_padding_block',
+	'badge_padding_inline',
+	'badge_gap_horizontal',
+	'badge_gap_vertical',
+];
 
 const Widget = ( { formData = {} } ) => {
-	const labelName = formData?.name || __( 'Label', 'lime-product-labels' );
+	const { options } = useAppStore();
+
+	const isStylesMode = 'style_method' in formData;
+
+	const [ previewShape, setPreviewShape ] = useState( 'text-shape-badge' );
+
+	const {
+		name,
+		label_shape = 'text-shape-badge',
+		product_page_placement = 'top_left',
+	} = isStylesMode ? {} : formData;
+
+	const stylesData = isStylesMode ? formData : ( options?.styles || {} );
+	const styleMethod = stylesData?.style_method || 'automatic';
+
+	const labelName = name || __( 'Label', 'lime-product-labels' );
+	const activeShape = isStylesMode ? previewShape : label_shape;
+	const shape = SHAPE_MAP[ activeShape ] || 'badge';
+	const placementMod = ( product_page_placement || 'top_left' ).replace( '_', '-' );
+	const badgeClasses = `lpl-label lpl-label--${ shape } lpl-label--${ placementMod }`;
+
+	const inlineCssVars = useMemo( () => {
+		if ( styleMethod !== 'manual' ) return {};
+		return CSS_VAR_FIELDS.reduce( ( acc, fieldId ) => {
+			const val = stylesData[ fieldId ];
+			if ( val !== undefined && val !== '' ) {
+				acc[ `--lpl-${ fieldId.replace( /_/g, '-' ) }` ] = val;
+			}
+			return acc;
+		}, {} );
+	}, [ styleMethod, stylesData ] );
 
 	return (
-		<div className="lime-product-labels__preview-widget">
+		<div className="lime-product-labels__preview-widget" style={ inlineCssVars }>
 			<Box borderWidth="200" borderColor="#1A1A1A" borderRadius="500" padding="500" paddingBlockEnd="100" shadow="400">
 				<BlockStack gap="800">
 					<div className="flex flex-col gap-ml lime-product-labels__preview-header">
 						<div className="flex items-end gap-ml">
 							<div className="position-relative">
 								<SkeletonThumbnail size="large" />
-								{ labelName && (
-									<span className="lime-product-labels__preview-badge">
-										{ labelName }
-									</span>
-								) }
+								<div className={ badgeClasses }>
+									<span className="lpl-label__text">{ labelName }</span>
+								</div>
 							</div>
 							<div className="flex-grow flex flex-col gap-md">
 								<SkeletonBodyText />
@@ -32,7 +106,26 @@ const Widget = ( { formData = {} } ) => {
 						<SkeletonBodyText />
 					</div>
 
-					<div className="flex flex-col gap-lg lime-product-labels__preview-footer">
+					{ isStylesMode && (
+					<div className="lime-product-labels__preview-shape-picker">
+						<div className="lime-product-labels__shape-select">
+							{ SHAPES.map( ( { value: shapeValue, component: ShapeSVG } ) => (
+								<button
+									key={ shapeValue }
+									type="button"
+									className={ `lime-product-labels__shape-item${ previewShape === shapeValue ? ' is-selected' : '' }` }
+									onClick={ () => setPreviewShape( shapeValue ) }
+									aria-label={ shapeValue }
+									aria-pressed={ previewShape === shapeValue }
+								>
+									<ShapeSVG />
+								</button>
+							) ) }
+						</div>
+					</div>
+				) }
+
+				<div className="flex flex-col gap-lg lime-product-labels__preview-footer">
 						<div>
 							<svg viewBox="0 -1 335 120" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<mask id="path-1-inside-1_lpl_2268" fill="white"><path d="M0 0H335V151H0V0Z"></path></mask>

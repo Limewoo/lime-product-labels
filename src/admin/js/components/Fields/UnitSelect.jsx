@@ -1,4 +1,5 @@
 import { useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import {
 	__experimentalUnitControl as UnitControl,
 	RangeControl,
@@ -14,6 +15,8 @@ const allowedUnits = [
 	{ label: 'vh', value: 'vh' },
 ];
 
+const AUTO_UNIT = { label: __( 'Auto', 'lime-product-labels' ), value: '' };
+
 const UnitSelect = ( props ) => {
 	const {
 		fieldId,
@@ -22,6 +25,7 @@ const UnitSelect = ( props ) => {
 		labelHidden,
 		helpText = '',
 		slider = false,
+		clearable = false,
 		value,
 		onChange,
 		units = allowedUnits,
@@ -30,8 +34,12 @@ const UnitSelect = ( props ) => {
 		step = 0.01,
 	} = props;
 
+	const effectiveUnits = clearable ? [ AUTO_UNIT, ...units ] : units;
+
 	const [ currentUnit, setCurrentUnit ] = useState( 'px' );
 	const [ numericValue, setNumericValue ] = useState( 0 );
+
+	const isAuto = clearable && ( value === '' || value === undefined || value === null );
 
 	useEffect( () => {
 		if ( value ) {
@@ -41,17 +49,27 @@ const UnitSelect = ( props ) => {
 			if ( unitMatch ) {
 				setCurrentUnit( unitMatch[ 0 ] );
 			}
+		} else if ( clearable ) {
+			setCurrentUnit( '' );
+			setNumericValue( 0 );
 		}
 	}, [ value ] );
 
 	const handleSliderChange = ( val ) => {
+		const unit = isAuto ? 'px' : currentUnit;
+		if ( isAuto ) setCurrentUnit( 'px' );
 		setNumericValue( val );
-		onChange( `${ val }${ currentUnit }` );
+		onChange( `${ val }${ unit }` );
 	};
 
 	const handleUnitChange = ( unit ) => {
 		setCurrentUnit( unit );
-		onChange( `${ numericValue }${ unit }` );
+		if ( unit === '' && clearable ) {
+			setNumericValue( 0 );
+			onChange( '' );
+		} else {
+			onChange( `${ numericValue }${ unit }` );
+		}
 	};
 
 	return (
@@ -69,7 +87,7 @@ const UnitSelect = ( props ) => {
 								min={ min }
 								max={ max }
 								step={ step }
-								value={ numericValue }
+								value={ isAuto ? min : numericValue }
 								onChange={ handleSliderChange }
 								withInputField={ false }
 							/>
@@ -82,9 +100,14 @@ const UnitSelect = ( props ) => {
 							max={ max }
 							step={ step }
 							__next40pxDefaultSize
-							value={ value }
-							units={ units }
-							onChange={ onChange }
+							value={ isAuto ? '' : value }
+							units={ effectiveUnits }
+							onChange={ isAuto ? ( val ) => {
+								const num = parseFloat( val ) || 0;
+								setCurrentUnit( 'px' );
+								setNumericValue( num );
+								onChange( `${ num }px` );
+							} : onChange }
 							onUnitChange={ handleUnitChange }
 						/>
 					</div>

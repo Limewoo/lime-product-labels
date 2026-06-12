@@ -18,13 +18,13 @@ ul.products li.product,
 	// ── Placement ─────────────────────────────────────────────────────────────
 
 	&--top-left {
-		top: 10px;
-		left: 10px;
+		top: var( --lpl-badge-gap-vertical, 10px );
+		left: var( --lpl-badge-gap-horizontal, 10px );
 	}
 
 	&--top-right {
-		top: 10px;
-		right: 10px;
+		top: var( --lpl-badge-gap-vertical, 10px );
+		right: var( --lpl-badge-gap-horizontal, 10px );
 	}
 
 	// ── Device visibility ─────────────────────────────────────────────────────
@@ -105,11 +105,44 @@ ul.products li.product,
 		padding: 10px;
 	}
 
-	&--banner .lpl-label__text {
-		border-radius: 0;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		font-size: 11px;
+	// Banner: wide diagonal ribbon crossing the corner. The band is much longer
+	// than the overflow-hidden square wrapper so both ends always extend past
+	// the wrapper edges before clipping — the visible cut is made exactly by
+	// the wrapper edges, never by the band's own end caps. Wrapper must stay
+	// smaller than the smallest product image (admin preview thumbnail = 80px).
+	&--banner {
+		overflow: hidden;
+		top: var( --lpl-badge-gap-vertical, 0px ) !important;
+		left: var( --lpl-badge-gap-horizontal, 0px ) !important;
+		width: 72px;
+		height: 72px;
+
+		&.lpl-label--top-right {
+			left: auto !important;
+			right: var( --lpl-badge-gap-horizontal, 0px ) !important;
+		}
+
+		.lpl-label__text {
+			position: absolute;
+			top: 13px;
+			left: -45px;
+			width: 140px;
+			border-radius: 0;
+			padding-block: 4px;
+			padding-inline: 0;
+			text-align: center;
+			font-size: 11px;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+			transform: rotate( -45deg );
+			transform-origin: center center;
+		}
+
+		&.lpl-label--top-right .lpl-label__text {
+			left: auto;
+			right: -45px;
+			transform: rotate( 45deg );
+		}
 	}
 
 	&--burst .lpl-label__text {
@@ -147,18 +180,31 @@ ul.products li.product,
 		clip-path: polygon( 0% 0%, 100% 0%, 100% 65%, 50% 100%, 0% 65% );
 	}
 
-	// Corner ribbon: displayed as a diagonal ribbon anchored to a corner.
-	// The .lpl-label wrapper acts as a clipping box; the text is rotated inside.
+	// Corner: solid triangle filling the corner. The triangle is painted by a
+	// ::before on the wrapper (a rotated text span cannot carry an unrotated
+	// clip-path), and the text is rotated independently on top of it.
 	&--corner {
 		overflow: hidden;
-		top: 0 !important;
-		left: 0 !important;
+		top: var( --lpl-badge-gap-vertical, 0px ) !important;
+		left: var( --lpl-badge-gap-horizontal, 0px ) !important;
 		width: 64px;
 		height: 64px;
 
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: var( --lpl-badge-bg, #1a1a1a );
+			clip-path: polygon( 0 0, 100% 0, 0 100% );
+		}
+
 		&.lpl-label--top-right {
 			left: auto !important;
-			right: 0 !important;
+			right: var( --lpl-badge-gap-horizontal, 0px ) !important;
+
+			&::before {
+				clip-path: polygon( 0 0, 100% 0, 100% 100% );
+			}
 		}
 
 		.lpl-label__text {
@@ -166,6 +212,7 @@ ul.products li.product,
 			top: 14px;
 			left: -18px;
 			width: 80px;
+			background: transparent;
 			border-radius: 0;
 			padding-inline: 4px;
 			padding-block: 3px;

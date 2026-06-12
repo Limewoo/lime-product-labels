@@ -863,7 +863,6 @@ class Fields {
 						'label'       => esc_html__( 'Background', 'lime-product-labels' ),
 						'default'     => '#1a1a1a',
 						'placeholder' => esc_html__( 'Select a color', 'lime-product-labels' ),
-						'col'         => 'half',
 						'css_var'     => true,
 						'conditions'  => $manual_condition,
 						'schema'      => array( 'type' => 'string' ),
@@ -874,7 +873,6 @@ class Fields {
 						'label'       => esc_html__( 'Text', 'lime-product-labels' ),
 						'default'     => '#ffffff',
 						'placeholder' => esc_html__( 'Select a color', 'lime-product-labels' ),
-						'col'         => 'half',
 						'css_var'     => true,
 						'conditions'  => $manual_condition,
 						'schema'      => array( 'type' => 'string' ),
@@ -941,6 +939,7 @@ class Fields {
 						'id'         => 'badge_width',
 						'type'       => 'unit',
 						'slider'     => true,
+						'clearable'  => true,
 						'label'      => esc_html__( 'Width', 'lime-product-labels' ),
 						'attributes' => array(
 							'min'   => 0,
@@ -974,6 +973,7 @@ class Fields {
 						'id'         => 'badge_height',
 						'type'       => 'unit',
 						'slider'     => true,
+						'clearable'  => true,
 						'label'      => esc_html__( 'Height', 'lime-product-labels' ),
 						'attributes' => array(
 							'min'   => 0,
@@ -983,10 +983,6 @@ class Fields {
 								array(
 									'label' => 'px',
 									'value' => 'px',
-								),
-								array(
-									'label' => '%',
-									'value' => '%',
 								),
 								array(
 									'label' => 'em',
@@ -1057,6 +1053,64 @@ class Fields {
 							),
 						),
 						'default'    => '14px',
+						'css_var'    => true,
+						'conditions' => $manual_condition,
+						'schema'     => array( 'type' => 'string' ),
+					),
+					array(
+						'id'         => 'badge_gap_horizontal',
+						'type'       => 'unit',
+						'slider'     => true,
+						'label'      => esc_html__( 'Horizontal gap', 'lime-product-labels' ),
+						'attributes' => array(
+							'min'   => 0,
+							'max'   => 100,
+							'step'  => 1,
+							'units' => array(
+								array(
+									'label' => 'px',
+									'value' => 'px',
+								),
+								array(
+									'label' => 'em',
+									'value' => 'em',
+								),
+								array(
+									'label' => 'rem',
+									'value' => 'rem',
+								),
+							),
+						),
+						'default'    => '10px',
+						'css_var'    => true,
+						'conditions' => $manual_condition,
+						'schema'     => array( 'type' => 'string' ),
+					),
+					array(
+						'id'         => 'badge_gap_vertical',
+						'type'       => 'unit',
+						'slider'     => true,
+						'label'      => esc_html__( 'Vertical gap', 'lime-product-labels' ),
+						'attributes' => array(
+							'min'   => 0,
+							'max'   => 100,
+							'step'  => 1,
+							'units' => array(
+								array(
+									'label' => 'px',
+									'value' => 'px',
+								),
+								array(
+									'label' => 'em',
+									'value' => 'em',
+								),
+								array(
+									'label' => 'rem',
+									'value' => 'rem',
+								),
+							),
+						),
+						'default'    => '10px',
 						'css_var'    => true,
 						'conditions' => $manual_condition,
 						'schema'     => array( 'type' => 'string' ),
