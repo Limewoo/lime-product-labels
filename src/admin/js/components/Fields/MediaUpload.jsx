@@ -1,6 +1,7 @@
 import { useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { BlockStack, Button, InlineStack, Label, Spinner, Text } from '@shopify/polaris';
+import { BlockStack, Button, Label, Spinner, Text } from '@shopify/polaris';
+import { DeleteIcon, EditIcon } from '@shopify/polaris-icons';
 import { uploadMedia } from '@coreJS/api';
 
 const ALLOWED_TYPES = [ 'image/png', 'image/jpeg', 'image/svg+xml' ];
@@ -132,18 +133,29 @@ const MediaUpload = ( props ) => {
 						{ __( 'Drop an image here, or click to select', 'lime-product-labels' ) }
 					</Text>
 				) }
-			</div>
 
-			{ image && ! isUploading && (
-				<InlineStack gap="200">
-					<Button onClick={ openFrame }>
-						{ __( 'Replace image', 'lime-product-labels' ) }
-					</Button>
-					<Button variant="plain" tone="critical" onClick={ () => onChange( '' ) }>
-						{ __( 'Remove', 'lime-product-labels' ) }
-					</Button>
-				</InlineStack>
-			) }
+				{ image && ! isUploading && (
+					/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */
+					<div
+						className="lime-product-labels__media-actions"
+						onClick={ ( e ) => e.stopPropagation() }
+					>
+						<Button
+							variant="plain"
+							icon={ EditIcon }
+							accessibilityLabel={ __( 'Replace image', 'lime-product-labels' ) }
+							onClick={ openFrame }
+						/>
+						<Button
+							variant="plain"
+							icon={ DeleteIcon }
+							tone="critical"
+							accessibilityLabel={ __( 'Remove image', 'lime-product-labels' ) }
+							onClick={ () => onChange( '' ) }
+						/>
+					</div>
+				) }
+			</div>
 
 			{ uploadError && <Text as="span" variant="bodySm" tone="critical">{ uploadError }</Text> }
 			{ helpText && <Text as="span" variant="bodySm" tone="subdued">{ helpText }</Text> }

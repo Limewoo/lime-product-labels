@@ -855,6 +855,7 @@ img {
 // Media field (label image upload)
 // Border matches Polaris input fields (.Polaris-TextField__Backdrop).
 .lime-product-labels__media-preview {
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -887,5 +888,13 @@ img {
 		width: auto;
 		height: auto;
 	}
+}
+
+.lime-product-labels__media-actions {
+	position: absolute;
+	top: $gap-xsm;
+	right: $gap-xsm;
+	display: flex;
+	gap: $gap-xs;
 }
 
