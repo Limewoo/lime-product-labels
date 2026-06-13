@@ -155,6 +155,14 @@ class Frontend {
 		if ( $css_vars ) {
 			wp_add_inline_style( 'lime-product-labels-frontend', $css_vars );
 		}
+
+		wp_enqueue_script(
+			'lime-product-labels-frontend',
+			LPL_BUILD_URL . 'frontend/index.js',
+			$asset['dependencies'] ?? array(),
+			$asset['version'],
+			true
+		);
 	}
 
 	/**

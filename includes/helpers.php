@@ -287,7 +287,7 @@ if ( ! function_exists( 'limewoo_lpl_get_products' ) ) {
 					'include' => $product_ids,
 					'status'  => 'publish',
 					'return'  => 'objects',
-					'type'    => array( 'simple', 'variable', 'variation' ),
+					'type'    => array( 'simple', 'variable' ),
 				)
 			);
 			foreach ( $pinned_query as $product ) {
@@ -301,7 +301,7 @@ if ( ! function_exists( 'limewoo_lpl_get_products' ) ) {
 				'return'  => 'objects',
 				'limit'   => $limit,
 				'page'    => $page,
-				'type'    => array( 'simple', 'variable', 'variation' ),
+				'type'    => array( 'simple', 'variable' ),
 				'orderby' => array(
 					'parent' => 'ASC',
 					'title'  => 'ASC',
