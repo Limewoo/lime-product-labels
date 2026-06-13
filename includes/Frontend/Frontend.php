@@ -208,7 +208,7 @@ class Frontend {
 				continue;
 			}
 
-			$output .= self::render_label_html( $label, $label['archive_page_placement'] ?? 'top_left' );
+			$output .= self::render_label_html( $label, $label['archive_page_placement'] ?? 'top_left', $product );
 		}
 
 		return $output;
@@ -235,7 +235,7 @@ class Frontend {
 				continue;
 			}
 
-			$html = self::render_label_html( $label, $label['product_page_placement'] ?? 'top_left' );
+			$html = self::render_label_html( $label, $label['product_page_placement'] ?? 'top_left', $product );
 			if ( $html ) {
 				echo limewoo_lpl_kses( $html ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
@@ -251,9 +251,13 @@ class Frontend {
 	 * @param string $placement 'top_left' or 'top_right'.
 	 * @return string
 	 */
-	private static function render_label_html( array $label, string $placement ) {
+	private static function render_label_html( array $label, string $placement, ?\WC_Product $product = null ) {
 		$label_type = $label['label_type'] ?? 'text';
 		$name       = trim( $label['name'] ?? '' );
+
+		if ( 'text' === $label_type && null !== $product && false !== strpos( $name, '{' ) ) {
+			$name = trim( self::replace_label_tokens( $name, $product ) );
+		}
 
 		// Device visibility.
 		$show_on_devices = $label['show_on_devices'] ?? array( 'desktop', 'mobile' );
@@ -339,6 +343,64 @@ class Frontend {
 			'<div class="%s"><span class="lpl-label__text">%s</span></div>',
 			esc_attr( $classes ),
 			esc_html( $name )
+		);
+	}
+
+	/**
+	 * Replaces {token} placeholders in a label name with product-specific values.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string      $text    Raw label name containing tokens.
+	 * @param \WC_Product $product Product to source values from.
+	 * @return string
+	 */
+	private static function replace_label_tokens( string $text, \WC_Product $product ) : string {
+		$stock_qty    = $product->managing_stock() ? (string) ( $product->get_stock_quantity() ?? '' ) : '';
+		$stock_status = $product->is_in_stock()
+			? esc_html__( 'In Stock', 'lime-product-labels' )
+			: esc_html__( 'Out of Stock', 'lime-product-labels' );
+		$sku          = $product->get_sku();
+
+		$regular_price = '';
+		$sale_price    = '';
+		$sale_percent  = '';
+		$sale_amount   = '';
+
+		if ( $product->is_type( 'variable' ) ) {
+			$reg = (float) $product->get_variation_regular_price( 'min' );
+			$sal = (float) $product->get_variation_sale_price( 'min' );
+
+			if ( $reg > 0 ) {
+				$regular_price = wp_strip_all_tags( wc_price( $reg ) );
+			}
+			if ( $sal > 0 ) {
+				$sale_price = wp_strip_all_tags( wc_price( $sal ) );
+			}
+			if ( $reg > 0 && $sal > 0 && $sal < $reg ) {
+				$sale_percent = round( ( $reg - $sal ) / $reg * 100 ) . '%';
+				$sale_amount  = wp_strip_all_tags( wc_price( $reg - $sal ) );
+			}
+		} elseif ( ! $product->is_type( 'grouped' ) ) {
+			$reg = (float) $product->get_regular_price();
+			$sal = (float) $product->get_sale_price();
+
+			if ( $reg > 0 ) {
+				$regular_price = wp_strip_all_tags( wc_price( $reg ) );
+			}
+			if ( $sal > 0 ) {
+				$sale_price = wp_strip_all_tags( wc_price( $sal ) );
+			}
+			if ( $reg > 0 && $sal > 0 && $sal < $reg ) {
+				$sale_percent = round( ( $reg - $sal ) / $reg * 100 ) . '%';
+				$sale_amount  = wp_strip_all_tags( wc_price( $reg - $sal ) );
+			}
+		}
+
+		return str_replace(
+			array( '{sale_percent}', '{sale_amount}', '{stock_qty}', '{stock_status}', '{regular_price}', '{sale_price}', '{sku}' ),
+			array( $sale_percent, $sale_amount, $stock_qty, $stock_status, $regular_price, $sale_price, $sku ),
+			$text
 		);
 	}
 

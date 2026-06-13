@@ -28,6 +28,7 @@ import ColorSelect from './ColorSelect';
 import UnitSelect from './UnitSelect';
 import ButtonField from './ButtonField';
 import MediaUpload from './MediaUpload';
+import ShowMore from '@admin/components/Common/ShowMore';
 
 const RenderFields = ( props ) => {
 	const {
@@ -139,13 +140,17 @@ const RenderFields = ( props ) => {
 
 			case 'text':
 			case 'textarea': {
-				const multiline = fieldType === 'textarea' ? 4 : false;
+				const multiline    = fieldType === 'textarea' ? 4 : false;
+				const showMoreItems = field.show_more || {};
+				const customLabel  = Object.keys( showMoreItems ).length
+					? <ShowMore triggerText={ fieldLabel } items={ showMoreItems } />
+					: fieldLabel;
 				fieldComponent = (
 					<TextField
 						multiline={ multiline }
 						type="text"
 						size="large"
-						label={ fieldLabel }
+						label={ customLabel }
 						labelHidden={ labelHidden }
 						helpText={ desc }
 						prefix={ decodeEntities( prefix ) }

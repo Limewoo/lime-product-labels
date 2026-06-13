@@ -48,6 +48,22 @@ const CSS_VAR_FIELDS = [
 	'badge_image_width',
 ];
 
+const PREVIEW_TOKENS = {
+	'{sale_percent}':  '25%',
+	'{sale_amount}':   '$5.00',
+	'{stock_qty}':     '8',
+	'{stock_status}':  'In Stock',
+	'{regular_price}': '$20.00',
+	'{sale_price}':    '$15.00',
+	'{sku}':           'SKU-123',
+};
+
+const replaceTokensForPreview = ( text ) =>
+	Object.entries( PREVIEW_TOKENS ).reduce(
+		( acc, [ token, val ] ) => acc.split( token ).join( val ),
+		text
+	);
+
 const Widget = ( { formData = {} } ) => {
 	const { options } = useAppStore();
 
@@ -66,7 +82,7 @@ const Widget = ( { formData = {} } ) => {
 	const stylesData = isStylesMode ? formData : ( options?.styles || {} );
 	const styleMethod = stylesData?.style_method || 'automatic';
 
-	const labelName = name || __( 'Label', 'lime-product-labels' );
+	const labelName = replaceTokensForPreview( name || '' ) || __( 'Label', 'lime-product-labels' );
 	const isImageLabel = ! isStylesMode && label_type === 'image';
 	const imageUrl = label_image?.url || '';
 	const activeShape = isStylesMode ? previewShape : label_shape;
