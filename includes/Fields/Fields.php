@@ -530,7 +530,7 @@ class Fields {
 					),
 					array(
 						'id'      => 'product_page_placement',
-						'type'    => 'select',
+						'type'    => 'radio',
 						'label'   => esc_html__( 'Placement on product page', 'lime-product-labels' ),
 						'options' => array(
 							array(
@@ -560,7 +560,7 @@ class Fields {
 					),
 					array(
 						'id'      => 'archive_page_placement',
-						'type'    => 'select',
+						'type'    => 'radio',
 						'label'   => esc_html__( 'Placement on archive pages', 'lime-product-labels' ),
 						'options' => array(
 							array(
@@ -621,7 +621,7 @@ class Fields {
 				'fields'     => array(
 					array(
 						'id'      => 'label_type',
-						'type'    => 'select',
+						'type'    => 'radio',
 						'label'   => esc_html__( 'Label type', 'lime-product-labels' ),
 						'options' => array(
 							array(
