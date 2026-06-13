@@ -47,4 +47,10 @@
 			<property name="text_domain" type="array" value="lime-product-labels"/>
 		</properties>
 	</rule>
+
+	<rule ref="WordPress.Security.EscapeOutput">
+		<properties>
+			<property name="customEscapingFunctions" type="array" value="limewoo_lpl_kses"/>
+		</properties>
+	</rule>
 </ruleset>

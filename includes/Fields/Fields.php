@@ -169,7 +169,7 @@ class Fields {
 								'value' => 'brands',
 							),
 						),
-						'default' => 'products',
+						'default' => 'all',
 						'schema'  => array(
 							'type' => 'string',
 							'enum' => array( 'all', 'on_sale', 'featured', 'new_arrivals', 'out_of_stock', 'low_stock', 'best_sellers', 'top_rated', 'on_backorder', 'products', 'categories', 'tags', 'brands' ),

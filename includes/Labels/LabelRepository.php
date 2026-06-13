@@ -35,7 +35,7 @@ class LabelRepository {
 	public static function get_paginated( int $page = 1, int $per_page = 20, string $search = '', string $status = 'all' ) : array {
 		global $wpdb;
 
-		$table  = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table  = $wpdb->prefix . LPL_LABELS_TABLE;
 		$page   = max( 1, $page );
 		$offset = ( $page - 1 ) * $per_page;
 
@@ -54,17 +54,12 @@ class LabelRepository {
 
 		$where_sql = implode( ' AND ', $where );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant; $where_sql uses %s placeholders
-		$count_sql = "SELECT COUNT(*) FROM $table WHERE $where_sql";
-		$total     = (int) ( empty( $params ) ? $wpdb->get_var( $count_sql ) : $wpdb->get_var( $wpdb->prepare( $count_sql, $params ) ) ); // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		// $where_sql is built from trusted constants and %s placeholders only; $table uses %i.
+		$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE $where_sql", array_merge( array( $table ), $params ) ) );
 
-		$limit_params = array_merge( $params, array( $per_page, $offset ) );
+		$limit_params = array_merge( array( $table ), $params, array( $per_page, $offset ) );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant; $where_sql uses %s placeholders
-		$rows_sql = "SELECT label_id, data FROM $table WHERE $where_sql ORDER BY sort_order ASC, id ASC LIMIT %d OFFSET %d";
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$rows = $wpdb->get_results( $wpdb->prepare( $rows_sql, $limit_params ), ARRAY_A );
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT label_id, data FROM %i WHERE $where_sql ORDER BY sort_order ASC, id ASC LIMIT %d OFFSET %d", $limit_params ), ARRAY_A );
 
 		$labels = array();
 		foreach ( (array) $rows as $row ) {
@@ -102,10 +97,9 @@ class LabelRepository {
 
 		global $wpdb;
 
-		$table = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT data FROM $table WHERE status = %s ORDER BY sort_order ASC, id ASC", 'active' ), ARRAY_A );
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT data FROM %i WHERE status = %s ORDER BY sort_order ASC, id ASC", $table, 'active' ), ARRAY_A );
 
 		$labels = array();
 		foreach ( (array) $rows as $row ) {
@@ -131,10 +125,9 @@ class LabelRepository {
 	public static function get_by_id( string $label_id ) : ?array {
 		global $wpdb;
 
-		$table = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant
-		$row = $wpdb->get_row( $wpdb->prepare( "SELECT data FROM $table WHERE label_id = %s LIMIT 1", $label_id ), ARRAY_A );
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT data FROM %i WHERE label_id = %s LIMIT 1", $table, $label_id ), ARRAY_A );
 
 		if ( ! $row ) {
 			return null;
@@ -280,10 +273,10 @@ class LabelRepository {
 	public static function get_all() : array {
 		global $wpdb;
 
-		$table = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant
-		$rows = $wpdb->get_results( "SELECT data FROM $table ORDER BY sort_order ASC, id ASC", ARRAY_A );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Export: intentionally uncached full-table read.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT data FROM %i ORDER BY sort_order ASC, id ASC", $table ), ARRAY_A );
 
 		$labels = array();
 		foreach ( (array) $rows as $row ) {
@@ -307,7 +300,7 @@ class LabelRepository {
 	public static function import_labels( array $labels ) : int {
 		global $wpdb;
 
-		$table  = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table  = $wpdb->prefix . LPL_LABELS_TABLE;
 		$count  = 0;
 		$offset = self::get_next_sort_order();
 
@@ -318,8 +311,8 @@ class LabelRepository {
 				continue;
 			}
 
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant
-			$existing = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE label_id = %s", $label_id ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Import: existence check, no caching needed.
+			$existing = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM %i WHERE label_id = %s", $table, $label_id ) );
 
 			if ( $existing ) {
 				$wpdb->update(
@@ -367,10 +360,10 @@ class LabelRepository {
 	private static function get_next_sort_order() : int {
 		global $wpdb;
 
-		$table = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from plugin constant
-		$max = $wpdb->get_var( "SELECT MAX(sort_order) FROM $table" );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate query; caching would be unreliable mid-import.
+		$max = $wpdb->get_var( $wpdb->prepare( "SELECT MAX(sort_order) FROM %i", $table ) );
 
 		return is_null( $max ) ? 0 : (int) $max + 1;
 	}

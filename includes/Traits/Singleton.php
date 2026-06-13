@@ -50,11 +50,10 @@ trait Singleton {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return mixed
-	 * @throws \Exception
+	 * @return void
 	 */
 	public function __clone() {
-		throw new \Exception( 'Cloning is not allowed.' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cloning is not allowed.', 'lime-product-labels' ), '1.0.0' );
 	}
 
 	/**
@@ -62,10 +61,9 @@ trait Singleton {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return mixed
-	 * @throws \Exception
+	 * @return void
 	 */
 	public function __wakeup() {
-		throw new \Exception( 'Deserialization is not allowed.' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Deserialization is not allowed.', 'lime-product-labels' ), '1.0.0' );
 	}
 }

@@ -514,7 +514,7 @@ if ( ! function_exists( 'limewoo_lpl_get_users' ) ) {
 			);
 
 			if ( ! empty( $search ) ) {
-				$main_query_args['search']         = '*' . esc_attr( $search ) . '*';
+				$main_query_args['search']         = '*' . $search . '*';
 				$main_query_args['search_columns'] = array( 'user_login', 'user_nicename', 'user_email', 'display_name' );
 			}
 

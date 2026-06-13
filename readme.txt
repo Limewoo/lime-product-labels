@@ -1,0 +1,84 @@
+=== Lime Product Labels ===
+Contributors: limewoo
+Tags: product labels, product badges, woocommerce badges, sale badge, product stickers
+Requires at least: 6.5
+Tested up to: 6.9
+Requires PHP: 8.0
+Stable tag: 1.0.0
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Add customizable visual badge labels to WooCommerce product images — Sale, New, Hot, and more.
+
+== Description ==
+
+Lime Product Labels lets you attach eye-catching badges to your WooCommerce product images to highlight promotions, availability, and other key product attributes.
+
+**Key features:**
+
+* Create unlimited product labels with custom text or images
+* 8 built-in label shapes: badge, tag, chevron, circle, banner, corner, burst, shield
+* Flexible targeting: all products, on sale, featured, new arrivals, out of stock, low stock, best sellers, top rated, on backorder, specific products, categories, tags, or brands
+* Placement control: top-left or top-right on product pages and archive/shop pages
+* Device visibility: show on desktop, mobile, or both
+* User condition rules: show labels to specific users or user roles only
+* Dynamic shortcodes in label names: `{sale_percent}`, `{sale_amount}`, `{stock_qty}`, `{stock_status}`, `{regular_price}`, `{sale_price}`, `{sku}`
+* Manual styling: background color, text color, font size, corner radius, padding, and more — or let the plugin auto-match your theme
+* Export and import labels as JSON for easy backups and site migrations
+* Theme compatibility layer for Woostify and Botiga
+* WooCommerce HPOS (Custom Order Tables) compatible
+
+== Installation ==
+
+1. Upload the plugin files to the `/wp-content/plugins/lime-product-labels` directory, or install the plugin through the WordPress Plugins screen directly.
+2. Activate the plugin through the **Plugins** screen in WordPress.
+3. Make sure WooCommerce is installed and active.
+4. Go to **Lime Labels** in the WordPress admin menu to create your first label.
+
+== Frequently Asked Questions ==
+
+= Does this plugin require WooCommerce? =
+
+Yes. Lime Product Labels requires WooCommerce to be installed and active.
+
+= Which PHP version is required? =
+
+PHP 8.0 or higher.
+
+= Can I use image labels instead of text? =
+
+Yes. When creating a label, set the label type to **Image** and upload a PNG, JPG, or SVG file (SVG requires a plugin such as Safe SVG to be installed).
+
+= Can I show different labels to different users? =
+
+Yes. Each label has an **Advanced Settings** section where you can restrict visibility to specific users or user roles (include or exclude).
+
+= Are label positions customizable? =
+
+You can place each label in the top-left or top-right corner of the product image, independently for the product page and archive pages.
+
+= Will this slow down my store? =
+
+No. Badge HTML is rendered server-side by PHP. Eligible labels per product are cached in versioned transients for up to 24 hours. The cache is automatically invalidated when labels or products change.
+
+= Can I export and import my label settings? =
+
+Yes. Go to **Lime Labels → Settings → Export & Import** to download all your labels as a JSON file or restore them from a backup.
+
+== Screenshots ==
+
+1. Label list — manage all your product badges in one place.
+2. Label editor — design your badge with text or an image and configure targeting rules.
+3. Styles tab — choose automatic styling or configure colors, font size, padding, and more manually.
+4. Settings tab — export or import labels and manage plugin data.
+5. Storefront — badges displayed on product archive and single product images.
+
+== Changelog ==
+
+= 1.0.0 =
+* Initial release.
+
+== Upgrade Notice ==
+
+= 1.0.0 =
+Initial release.

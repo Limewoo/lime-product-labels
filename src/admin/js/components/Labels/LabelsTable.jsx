@@ -31,6 +31,18 @@ import {
 } from '@shopify/polaris-icons';
 
 import { generateUUID } from '@coreJS/helpers';
+
+const TOKEN_RE = /\{[^}]+\}/;
+
+const renderLabelName = ( name ) => {
+	if ( ! name || ! name.includes( '{' ) ) return name;
+	const parts = name.split( /(\{[^}]+\})/ );
+	return parts.map( ( part, i ) =>
+		TOKEN_RE.test( part )
+			? <span key={ i } className="label-token">{ part }</span>
+			: part
+	);
+};
 import EmptyLabels from '@admin/components/Labels/EmptyLabels';
 import SortableColumnHeader from '@admin/components/Common/SortableColumnHeader';
 import useSortConfig from '@admin/hooks/useSortConfig';
@@ -225,7 +237,7 @@ const LabelsTable = () => {
 						{ labels?.map( ( label, index ) => {
 							const { id: labelId, name, status, include_products: products = [] } = label || {};
 							const isActive = status === 'active';
-							const labelName = name || __( 'Label', 'lime-product-labels' );
+							const labelName = renderLabelName( name || __( 'Label', 'lime-product-labels' ) );
 							const isOpen = openCardIndex === index;
 
 							return (

@@ -498,7 +498,12 @@ class Controller {
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public function create_label_handler( \WP_REST_Request $request ) {
-		$label  = $request->get_json_params();
+		$label = $request->get_json_params();
+
+		if ( ! is_array( $label ) ) {
+			return new \WP_Error( 'invalid_body', esc_html__( 'Request body must be a JSON object.', 'lime-product-labels' ), array( 'status' => 400 ) );
+		}
+
 		$result = LabelRepository::create( $label );
 
 		if ( is_wp_error( $result ) ) {
@@ -521,7 +526,12 @@ class Controller {
 	public function update_label_handler( \WP_REST_Request $request ) {
 		$label_id = sanitize_text_field( $request->get_param( 'label_id' ) );
 		$label    = $request->get_json_params();
-		$result   = LabelRepository::update( $label_id, $label );
+
+		if ( ! is_array( $label ) ) {
+			return new \WP_Error( 'invalid_body', esc_html__( 'Request body must be a JSON object.', 'lime-product-labels' ), array( 'status' => 400 ) );
+		}
+
+		$result = LabelRepository::update( $label_id, $label );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -789,9 +799,10 @@ class Controller {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param \WP_REST_Request $request REST request.
 	 * @return \WP_REST_Response
 	 */
-	public function export_labels_handler() {
+	public function export_labels_handler( \WP_REST_Request $request ) {
 		$labels = LabelRepository::get_all();
 
 		if ( empty( $labels ) ) {
@@ -832,7 +843,7 @@ class Controller {
 	public function import_labels_handler( \WP_REST_Request $request ) {
 		$file_content = $request->get_param( 'file' );
 
-		if ( strlen( $file_content ) > 2 * MB_IN_BYTES ) {
+		if ( ! is_string( $file_content ) || strlen( $file_content ) > 2 * MB_IN_BYTES ) {
 			return new \WP_Error( 'file_too_large', esc_html__( 'Import file exceeds the 2MB limit.', 'lime-product-labels' ), array( 'status' => 413 ) );
 		}
 
