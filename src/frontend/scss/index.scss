@@ -1,6 +1,7 @@
 // Ensure archive product items provide a positioning context for absolute badges.
 ul.products li.product,
-.woocommerce-loop-product__link-wrapper {
+.woocommerce-loop-product__link-wrapper,
+li.wc-block-product {
 	position: relative;
 }
 

@@ -147,7 +147,7 @@ const Header = () => {
 									<Button
 										variant="primary"
 										icon={ ChevronDownIcon }
-										disabled={ ! hasChanges }
+										disabled={ ! hasChanges || formSubmitted }
 										onClick={ () => setSaveDropdownOpen( ( prev ) => ! prev ) }
 										accessibilityLabel={ __( 'More save options', 'lime-product-labels' ) }
 									/>

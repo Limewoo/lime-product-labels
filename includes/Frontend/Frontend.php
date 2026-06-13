@@ -7,6 +7,7 @@
 
 namespace LimeProductLabels\Frontend;
 
+use LimeProductLabels\Compatibility\Compatibility;
 use LimeProductLabels\Fields\Fields;
 use LimeProductLabels\Labels\LabelRepository;
 use LimeProductLabels\Traits\Singleton;
@@ -51,6 +52,9 @@ class Frontend {
 	 * @since 1.0.0
 	 */
 	private function __construct() {
+		// Compatibility: must run before hook filters below.
+		Compatibility::get_instance();
+
 		// Clear per-product transients when labels or styles change.
 		add_action( 'update_option_' . LPL_OPTION_KEY, array( $this, 'clear_all_label_cache' ) );
 		add_action( 'update_option_' . LabelRepository::CACHE_VERSION_KEY, array( $this, 'clear_all_label_cache' ) );
@@ -69,12 +73,25 @@ class Frontend {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param string $hook Default: 'woocommerce_before_shop_loop_item'.
+		 * @param string $hook     Default: 'woocommerce_before_shop_loop_item'.
+		 * @param int    $priority Default: 10.
 		 */
-		$archive_hook = apply_filters( 'limewoo_lpl_archive_hook', 'woocommerce_before_shop_loop_item' );
-		add_action( $archive_hook, array( $this, 'render_archive_labels' ) );
+		$archive_hook     = apply_filters( 'limewoo_lpl_archive_hook', 'woocommerce_before_shop_loop_item' );
+		$archive_priority = apply_filters( 'limewoo_lpl_archive_hook_priority', 10 );
+		add_action( $archive_hook, array( $this, 'render_archive_labels' ), $archive_priority );
 
-		add_action( 'woocommerce_product_thumbnails', array( $this, 'render_single_labels' ) );
+		/**
+		 * Filter the WooCommerce single product hook used to render label badges.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $hook     Default: 'woocommerce_product_thumbnails'.
+		 * @param int    $priority Default: 10.
+		 */
+		$single_hook     = apply_filters( 'limewoo_lpl_single_product_hook', 'woocommerce_product_thumbnails' );
+		$single_priority = apply_filters( 'limewoo_lpl_single_product_hook_priority', 10 );
+		add_action( $single_hook, array( $this, 'render_single_labels' ), $single_priority );
+
 		add_filter( 'woocommerce_single_product_image_gallery_classes', array( $this, 'add_gallery_class' ) );
 	}
 
@@ -168,18 +185,33 @@ class Frontend {
 			return;
 		}
 
+		echo limewoo_lpl_kses( self::get_archive_labels_html( $product ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Returns the rendered archive label HTML for a product.
+	 *
+	 * Public so theme-compatibility code can call it when the standard
+	 * archive hook is not available (e.g. WooCommerce Blocks).
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WC_Product $product The product.
+	 * @return string
+	 */
+	public static function get_archive_labels_html( \WC_Product $product ) : string {
 		$labels = self::get_labels_for_product( $product->get_id() );
+		$output = '';
 
 		foreach ( $labels as $label ) {
 			if ( ! in_array( 'archive', $label['show_on_pages'] ?? array(), true ) ) {
 				continue;
 			}
 
-			$html = self::render_label_html( $label, $label['archive_page_placement'] ?? 'top_left' );
-			if ( $html ) {
-				echo limewoo_lpl_kses( $html ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			}
+			$output .= self::render_label_html( $label, $label['archive_page_placement'] ?? 'top_left' );
 		}
+
+		return $output;
 	}
 
 	/**

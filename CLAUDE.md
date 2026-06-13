@@ -28,7 +28,7 @@ No PHP test suite exists — `composer run-tests` only runs PHPCS.
 ## PHP Architecture
 
 ### Bootstrap
-`lime-product-labels.php` defines all `LPL_*` constants, registers activation/deactivation hooks (`Install::activate/deactivate`), and initialises `LimeProductLabelsMain` on `plugins_loaded`. `LimeProductLabelsMain::init()` instantiates the three core singletons in order: `Admin → Controller → Frontend`.
+`lime-product-labels.php` defines all `LPL_*` constants, registers activation/deactivation hooks (`Install::activate/deactivate`), and initialises `LimeProductLabelsMain` on `plugins_loaded`. `LimeProductLabelsMain::init()` instantiates core singletons in order: `Admin → Controller → Frontend`. **Compatibility is initialized inside `Frontend::__construct()` at the top**, before any hook filters are applied, so Compatibility's filter registrations are always in place when Frontend reads them.
 
 ### Autoloading
 PSR-4: `LimeProductLabels\` maps to `includes/`. `includes/helpers.php` is autoloaded as a file (global functions). All classes use `use LimeProductLabels\Traits\Singleton` — never call constructors directly; use `ClassName::get_instance()`.
@@ -43,6 +43,8 @@ PSR-4: `LimeProductLabels\` maps to `includes/`. `includes/helpers.php` is autol
 | `Admin\Menu` | Registers WP admin menu ("Lime Labels") + submenus (Labels/Styles/Settings). Slug: `lime-product-labels`. File: `includes/Admin/Menu.php` |
 | `Controller` | REST API (`lime_product_labels/v1`). Label CRUD: `GET/POST /labels`, `GET/PUT/DELETE /labels/{id}`, `POST /labels/reorder`. Styles + settings saved via WP Settings API. Data endpoints: /products, /taxonomies, /users, /user_roles, /coupons |
 | `Frontend` | Badge overlay on product images. Hooks: `init→lpl_init`, `wp_enqueue_scripts→enqueue_assets`, `woocommerce_before_shop_loop_item→render_archive_labels`, `woocommerce_product_thumbnails→render_single_labels`, `woocommerce_single_product_image_gallery_classes→add_gallery_class`. File: `includes/Frontend/Frontend.php` |
+| `Compatibility\Compatibility` | Theme/plugin-specific overrides. One private method per integration, called from `__construct`. Initialized at the top of `Frontend::__construct()` before hook filters are applied. **Woostify** — single product badge moved to `woocommerce_before_single_product_summary` priority 22 (inside `.product-gallery` wrapper, before image slide at 30) via `limewoo_lpl_single_product_hook` + `limewoo_lpl_single_product_hook_priority` filters; adds `position:relative` to `.product-gallery` via inline CSS. **Botiga** — archive badge moved to `woocommerce_before_shop_loop_item_title` priority 10 (inside `.loop-image-wrap` which already has `position:relative; overflow:hidden`, opens at priority 9, closes at 11) via `limewoo_lpl_archive_hook` + `limewoo_lpl_archive_hook_priority` filters. File: `includes/Compatibility/Compatibility.php` |
+
 No License, Updater, or Analytics classes.
 
 ### Data storage
