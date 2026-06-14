@@ -142,11 +142,7 @@ final class LimeProductLabelsMain {
 	 * @return bool
 	 */
 	private function is_woocommerce_active() {
-		if ( is_multisite() && array_key_exists( 'woocommerce/woocommerce.php', get_site_option( 'active_sitewide_plugins', array() ) ) ) {
-			return true;
-		}
-
-		return in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true );
+		return class_exists( 'WooCommerce' );
 	}
 
 	/**
