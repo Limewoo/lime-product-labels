@@ -69,6 +69,10 @@ Labels are stored in a custom DB table (`wp_lime_product_labels`). Styles and se
 
 See [`CLAUDE.md`](CLAUDE.md) for full architecture documentation.
 
+## More Plugins
+
+Find more WooCommerce plugins by Limewoo at [limewoo.com](https://limewoo.com).
+
 ## License
 
 GPL-2.0-or-later — see [LICENSE](https://www.gnu.org/licenses/gpl-2.0.html).

@@ -28,6 +28,8 @@ Lime Product Labels lets you attach eye-catching badges to your WooCommerce prod
 * Theme compatibility layer for Woostify and Botiga
 * WooCommerce HPOS (Custom Order Tables) compatible
 
+Check out our other WooCommerce plugins at [limewoo.com](https://limewoo.com).
+
 == Installation ==
 
 1. Upload the plugin files to the `/wp-content/plugins/lime-product-labels` directory, or install the plugin through the WordPress Plugins screen directly.
@@ -72,6 +74,10 @@ Yes. Go to **Lime Labels → Settings → Export & Import** to download all your
 3. Styles tab — choose automatic styling or configure colors, font size, padding, and more manually.
 4. Settings tab — export or import labels and manage plugin data.
 5. Storefront — badges displayed on product archive and single product images.
+
+== More Plugins ==
+
+Find more WooCommerce plugins by Limewoo at [limewoo.com](https://limewoo.com).
 
 == Changelog ==
 
