@@ -10,12 +10,12 @@
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
-$options = get_option( 'lime_product_labels' );
+$limewoo_lpl_options = get_option( 'lime_product_labels' );
 
-if ( ! empty( $options['settings']['delete_data_on_uninstall'] ) ) {
+if ( ! empty( $limewoo_lpl_options['settings']['delete_data_on_uninstall'] ) ) {
 	global $wpdb;
 
-	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- %i identifier placeholder requires WP 6.2+.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange -- One-time schema removal on uninstall; no caching applicable.
 	$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'lime_product_labels' ) );
 
 	delete_option( 'lime_product_labels' );

@@ -13,10 +13,10 @@
  * Text Domain:           lime-product-labels
  * Domain Path:           /languages
  * Requires at least:     6.5
- * Tested up to:          6.9
+ * Tested up to:          7.0
  * Requires Plugins:      woocommerce
- * WC requires at least:  7.0
- * WC tested up to:       10.5
+ * WC requires at least:  8.0
+ * WC tested up to:       10.8
  * Requires PHP:          8.0
  *
  * @package lime-product-labels

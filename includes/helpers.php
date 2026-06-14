@@ -229,19 +229,6 @@ if ( ! function_exists( 'limewoo_lpl_kses_allowed_tags' ) ) {
 	}
 }
 
-if ( ! function_exists( 'limewoo_lpl_kses' ) ) {
-	/**
-	 * Safe output helper for HTML.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $html Raw HTML.
-	 * @return string
-	 */
-	function limewoo_lpl_kses( $html ) {
-		return wp_kses( $html, limewoo_lpl_kses_allowed_tags() );
-	}
-}
 
 if ( ! function_exists( 'limewoo_lpl_get_products' ) ) {
 	/**

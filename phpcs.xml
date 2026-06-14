@@ -48,9 +48,4 @@
 		</properties>
 	</rule>
 
-	<rule ref="WordPress.Security.EscapeOutput">
-		<properties>
-			<property name="customEscapingFunctions" type="array" value="limewoo_lpl_kses"/>
-		</properties>
-	</rule>
 </ruleset>

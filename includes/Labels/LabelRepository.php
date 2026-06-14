@@ -35,31 +35,33 @@ class LabelRepository {
 	public static function get_paginated( int $page = 1, int $per_page = 20, string $search = '', string $status = 'all' ) : array {
 		global $wpdb;
 
-		$table  = $wpdb->prefix . LPL_LABELS_TABLE;
-		$page   = max( 1, $page );
-		$offset = ( $page - 1 ) * $per_page;
+		$table         = $wpdb->prefix . LPL_LABELS_TABLE;
+		$page          = max( 1, $page );
+		$offset        = ( $page - 1 ) * $per_page;
+		$filter_status = in_array( $status, array( 'active', 'inactive' ), true ) ? $status : '';
+		$filter_search = ! empty( $search ) ? '%' . $wpdb->esc_like( $search ) . '%' : '';
 
-		$where  = array( '1=1' );
-		$params = array();
-
-		if ( 'all' !== $status && in_array( $status, array( 'active', 'inactive' ), true ) ) {
-			$where[]  = 'status = %s';
-			$params[] = $status;
+		if ( $filter_status && $filter_search ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin list; not cached.
+			$total = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = %s AND name LIKE %s', $table, $filter_status, $filter_search ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin list; not cached.
+			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT label_id, data FROM %i WHERE status = %s AND name LIKE %s ORDER BY sort_order ASC, id ASC LIMIT %d OFFSET %d', $table, $filter_status, $filter_search, $per_page, $offset ), ARRAY_A );
+		} elseif ( $filter_status ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin list; not cached.
+			$total = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = %s', $table, $filter_status ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin list; not cached.
+			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT label_id, data FROM %i WHERE status = %s ORDER BY sort_order ASC, id ASC LIMIT %d OFFSET %d', $table, $filter_status, $per_page, $offset ), ARRAY_A );
+		} elseif ( $filter_search ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin list; not cached.
+			$total = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE name LIKE %s', $table, $filter_search ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin list; not cached.
+			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT label_id, data FROM %i WHERE name LIKE %s ORDER BY sort_order ASC, id ASC LIMIT %d OFFSET %d', $table, $filter_search, $per_page, $offset ), ARRAY_A );
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin list; not cached.
+			$total = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin list; not cached.
+			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT label_id, data FROM %i ORDER BY sort_order ASC, id ASC LIMIT %d OFFSET %d', $table, $per_page, $offset ), ARRAY_A );
 		}
-
-		if ( ! empty( $search ) ) {
-			$where[]  = 'name LIKE %s';
-			$params[] = '%' . $wpdb->esc_like( $search ) . '%';
-		}
-
-		$where_sql = implode( ' AND ', $where );
-
-		// $where_sql is built from trusted constants and %s placeholders only; $table uses %i.
-		$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE $where_sql", array_merge( array( $table ), $params ) ) );
-
-		$limit_params = array_merge( array( $table ), $params, array( $per_page, $offset ) );
-
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT label_id, data FROM %i WHERE $where_sql ORDER BY sort_order ASC, id ASC LIMIT %d OFFSET %d", $limit_params ), ARRAY_A );
 
 		$labels = array();
 		foreach ( (array) $rows as $row ) {
@@ -99,7 +101,8 @@ class LabelRepository {
 
 		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT data FROM %i WHERE status = %s ORDER BY sort_order ASC, id ASC", $table, 'active' ), ARRAY_A );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transient-cached above; this branch only runs on a cache miss.
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT data FROM %i WHERE status = %s ORDER BY sort_order ASC, id ASC', $table, 'active' ), ARRAY_A );
 
 		$labels = array();
 		foreach ( (array) $rows as $row ) {
@@ -127,7 +130,8 @@ class LabelRepository {
 
 		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
-		$row = $wpdb->get_row( $wpdb->prepare( "SELECT data FROM %i WHERE label_id = %s LIMIT 1", $table, $label_id ), ARRAY_A );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Single admin lookup; result is used immediately and not worth caching.
+		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT data FROM %i WHERE label_id = %s LIMIT 1', $table, $label_id ), ARRAY_A );
 
 		if ( ! $row ) {
 			return null;
@@ -158,6 +162,7 @@ class LabelRepository {
 		$table      = $wpdb->prefix . LPL_LABELS_TABLE;
 		$sort_order = self::get_next_sort_order();
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Inserting into plugin-owned custom table.
 		$inserted = $wpdb->insert(
 			$table,
 			array(
@@ -193,6 +198,7 @@ class LabelRepository {
 
 		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Updating plugin-owned custom table; write op, no read cache needed.
 		$updated = $wpdb->update(
 			$table,
 			array(
@@ -225,7 +231,9 @@ class LabelRepository {
 	public static function delete( string $label_id ) : bool {
 		global $wpdb;
 
-		$table  = $wpdb->prefix . LPL_LABELS_TABLE;
+		$table = $wpdb->prefix . LPL_LABELS_TABLE;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Deleting from plugin-owned custom table; write op, no read cache needed.
 		$result = $wpdb->delete( $table, array( 'label_id' => $label_id ), array( '%s' ) );
 
 		if ( false !== $result ) {
@@ -249,6 +257,7 @@ class LabelRepository {
 		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
 		foreach ( $label_ids as $index => $label_id ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Bulk reorder update; write op, no read cache needed.
 			$wpdb->update(
 				$table,
 				array( 'sort_order' => $index ),
@@ -275,8 +284,8 @@ class LabelRepository {
 
 		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Export: intentionally uncached full-table read.
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT data FROM %i ORDER BY sort_order ASC, id ASC", $table ), ARRAY_A );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin export: intentionally uncached full-table read.
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT data FROM %i ORDER BY sort_order ASC, id ASC', $table ), ARRAY_A );
 
 		$labels = array();
 		foreach ( (array) $rows as $row ) {
@@ -311,10 +320,11 @@ class LabelRepository {
 				continue;
 			}
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Import: existence check, no caching needed.
-			$existing = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM %i WHERE label_id = %s", $table, $label_id ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Existence check per label during import; no caching warranted.
+			$existing = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE label_id = %s', $table, $label_id ) );
 
 			if ( $existing ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Updating plugin-owned custom table during import; write op, no read cache needed.
 				$wpdb->update(
 					$table,
 					array(
@@ -327,6 +337,7 @@ class LabelRepository {
 					array( '%s' )
 				);
 			} else {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Inserting into plugin-owned custom table during import.
 				$wpdb->insert(
 					$table,
 					array(
@@ -362,8 +373,8 @@ class LabelRepository {
 
 		$table = $wpdb->prefix . LPL_LABELS_TABLE;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate query; caching would be unreliable mid-import.
-		$max = $wpdb->get_var( $wpdb->prepare( "SELECT MAX(sort_order) FROM %i", $table ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate query to determine next sort order; caching would be stale immediately.
+		$max = $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(sort_order) FROM %i', $table ) );
 
 		return is_null( $max ) ? 0 : (int) $max + 1;
 	}

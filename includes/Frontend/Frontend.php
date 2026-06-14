@@ -193,7 +193,7 @@ class Frontend {
 			return;
 		}
 
-		echo limewoo_lpl_kses( self::get_archive_labels_html( $product ) );
+		echo wp_kses( self::get_archive_labels_html( $product ), limewoo_lpl_kses_allowed_tags() );
 	}
 
 	/**
@@ -245,7 +245,7 @@ class Frontend {
 
 			$html = self::render_label_html( $label, $label['product_page_placement'] ?? 'top_left', $product );
 			if ( $html ) {
-				echo limewoo_lpl_kses( $html );
+				echo wp_kses( $html, limewoo_lpl_kses_allowed_tags() );
 			}
 		}
 	}
