@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:           Lime Product Labels
- * Plugin URI:            https://limewoo.com/product-labels
+ * Plugin URI:            https://github.com/Limewoo/lime-product-labels
  * Description:           Add visual badge labels to WooCommerce product images (e.g. New, Sale, Hot).
  * Version:               1.0.0
  * Author:                Limewoo
