@@ -53,9 +53,9 @@ class Install {
 
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$labels_table = $wpdb->prefix . LPL_LABELS_TABLE; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- value is from a plugin constant, not user input.
+		$labels_table = $wpdb->prefix . LPL_LABELS_TABLE;
 
-		$sql = "CREATE TABLE $labels_table (
+		$sql = "CREATE TABLE {$labels_table} (
 			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			label_id VARCHAR(36) NOT NULL,
 			name VARCHAR(255) NOT NULL DEFAULT '',
