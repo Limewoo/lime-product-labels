@@ -8,11 +8,13 @@ Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Add customizable visual badge labels to WooCommerce product images — Sale, New, Hot, and more.
+Add customizable visual badge labels to WooCommerce product images: Sale, New, Hot, and more.
 
 == Description ==
 
 Lime Product Labels lets you attach eye-catching badges to your WooCommerce product images to highlight promotions, availability, and other key product attributes.
+
+> More free WooCommerce plugins at [limewoo.com](https://limewoo.com).
 
 **Key features:**
 
@@ -23,12 +25,10 @@ Lime Product Labels lets you attach eye-catching badges to your WooCommerce prod
 * Device visibility: show on desktop, mobile, or both
 * User condition rules: show labels to specific users or user roles only
 * Dynamic shortcodes in label names: `{sale_percent}`, `{sale_amount}`, `{stock_qty}`, `{stock_status}`, `{regular_price}`, `{sale_price}`, `{sku}`
-* Manual styling: background color, text color, font size, corner radius, padding, and more — or let the plugin auto-match your theme
+* Manual styling: background color, text color, font size, corner radius, padding, and more; or let the plugin auto-match your theme
 * Export and import labels as JSON for easy backups and site migrations
 * Theme compatibility layer for Woostify and Botiga
 * WooCommerce HPOS (Custom Order Tables) compatible
-
-Check out our other WooCommerce plugins at [limewoo.com](https://limewoo.com).
 
 == Installation ==
 
@@ -69,11 +69,11 @@ Yes. Go to **Lime Labels → Settings → Export & Import** to download all your
 
 == Screenshots ==
 
-1. Label list — manage all your product badges in one place.
-2. Label editor — design your badge with text or an image and configure targeting rules.
-3. Styles tab — choose automatic styling or configure colors, font size, padding, and more manually.
-4. Settings tab — export or import labels and manage plugin data.
-5. Storefront — badges displayed on product archive and single product images.
+1. Label list: manage all your product badges in one place.
+2. Label editor: design your badge with text or an image and configure targeting rules.
+3. Styles tab: choose automatic styling or configure colors, font size, padding, and more manually.
+4. Settings tab: export or import labels and manage plugin data.
+5. Storefront: badges displayed on product archive and single product images.
 
 == More Plugins ==
 
