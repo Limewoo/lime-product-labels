@@ -795,8 +795,8 @@ class Frontend {
 	/**
 	 * Checks if the current user satisfies a label's user condition.
 	 *
-	 * Label user fields are flat (user_rule / user_selection_type / selected_users /
-	 * selected_user_roles), not grouped like the bxgy user_condition_rules array.
+	 * Label user fields are flat: user_rule / user_selection_type / selected_users /
+	 * selected_user_roles.
 	 *
 	 * @since 1.0.0
 	 *
