@@ -81,6 +81,19 @@ const LabelsTable = () => {
 		}
 	}, [ pagination.pageIndex, pagination.pageSize ] );
 
+	const silentReload = useCallback( async () => {
+		try {
+			const res = await fetchLabels( pagination.pageIndex + 1, pagination.pageSize );
+			if ( res?.success ) {
+				setLabelsPage( res.data );
+				sortedListRef.current = null;
+				setSortedLabels( null );
+			}
+		} catch ( e ) {
+			console.error( 'Failed to fetch labels:', e );
+		}
+	}, [ pagination.pageIndex, pagination.pageSize ] );
+
 	useEffect( () => {
 		loadLabels();
 	}, [ loadLabels ] );
@@ -155,7 +168,10 @@ const LabelsTable = () => {
 
 	const reorderMutation = useMutation( {
 		mutationFn: ( ids ) => reorderLabels( ids ),
-		onSuccess: () => loadLabels(),
+		onError: ( err ) => {
+			console.error( 'Failed to reorder labels:', err );
+			loadLabels();
+		},
 	} );
 
 	const toggleActions = ( index ) => {
