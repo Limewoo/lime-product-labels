@@ -1250,23 +1250,6 @@ class Fields {
 				),
 			),
 
-			array(
-				'section_id'  => 'data_management',
-				'title'       => esc_html__( 'Data Management', 'lime-product-labels' ),
-				'description' => esc_html__( 'Warning: This action is irreversible and will permanently delete all data.', 'lime-product-labels' ),
-				'fields'      => array(
-					array(
-						'id'      => 'delete_data_on_uninstall',
-						'type'    => 'checkbox',
-						'label'   => esc_html__( 'Remove all data upon uninstall', 'lime-product-labels' ),
-						'desc'    => esc_html__( 'Check this box to permanently remove all Lime Product Labels, settings, and data when the plugin is uninstalled.', 'lime-product-labels' ),
-						'default' => false,
-						'schema'  => array(
-							'type' => 'boolean',
-						),
-					),
-				),
-			),
 		);
 
 		/**
