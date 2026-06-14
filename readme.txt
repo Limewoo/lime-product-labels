@@ -1,5 +1,5 @@
 === Lime Product Labels ===
-Contributors: limewoo
+Contributors: limewoo, thenahidul
 Tags: product labels, product badges, woocommerce badges, sale badge, product stickers
 Requires at least: 6.5
 Tested up to: 7.0
