@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Add custom badge labels to WooCommerce product images. Highlight on sale, new arrivals, best sellers, low stock, and more with fully customizable shapes, colors, and targeting rules.
+Add custom badge labels to WooCommerce product images. Highlight sales, new arrivals, best sellers, low stock, and more with customizable styles.
 
 == Description ==
 
