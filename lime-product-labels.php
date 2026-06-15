@@ -164,8 +164,6 @@ final class LimeProductLabelsMain {
 	 * @since 1.0.0
 	 */
 	private function init() {
-		load_plugin_textdomain( 'lime-product-labels', false, dirname( LPL_PLUGIN_BASENAME ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
-
 		// Initialize core classes
 		Admin::get_instance();
 		Controller::get_instance();

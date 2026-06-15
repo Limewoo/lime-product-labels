@@ -141,14 +141,14 @@ class Controller {
 	 * @since 1.0.0
 	 */
 	public function register_rest_routes() {
-		// Public-facing routes (nonce required).
+		// Options route — admin only (returns label config + targeting data).
 		register_rest_route(
 			self::API_NAMESPACE,
 			'/options',
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'options_rest_handler' ),
-				'permission_callback' => array( $this, 'public_permissions_check' ),
+				'permission_callback' => array( $this, 'admin_permissions_check' ),
 			)
 		);
 
@@ -276,18 +276,6 @@ class Controller {
 	 */
 	public function admin_permissions_check( \WP_REST_Request $request ) {
 		return current_user_can( 'manage_options' ) && wp_verify_nonce( $request->get_header( 'X-WP-Nonce' ), 'wp_rest' );
-	}
-
-	/**
-	 * Public permission check (nonce required).
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param \WP_REST_Request $request REST request.
-	 * @return bool
-	 */
-	public function public_permissions_check( \WP_REST_Request $request ) {
-		return wp_verify_nonce( $request->get_header( 'X-WP-Nonce' ), 'wp_rest' );
 	}
 
 	/**

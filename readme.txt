@@ -75,6 +75,18 @@ Yes. Go to **Lime Labels → Settings → Export & Import** to download all your
 4. Settings tab: export or import labels and manage plugin data.
 5. Storefront: badges displayed on product archive and single product images.
 
+== Source Code ==
+
+The full source code, including all JavaScript source files, SCSS, and build configuration, is publicly available at:
+https://github.com/Limewoo/lime-product-labels
+
+To regenerate the compiled assets from source:
+
+1. Run `npm install` (or `bun install`) to install dependencies.
+2. Run `npm run build` (or `bun run build`) to produce the files in `build/`.
+
+The build uses `@wordpress/scripts` (webpack) with a custom `webpack.config.js`. Source files live in the `src/` directory.
+
 == More Plugins ==
 
 Find more WooCommerce plugins by Limewoo at [limewoo.com](https://limewoo.com).
