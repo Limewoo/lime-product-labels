@@ -168,6 +168,7 @@ const LabelsTable = () => {
 
 	const reorderMutation = useMutation( {
 		mutationFn: ( ids ) => reorderLabels( ids ),
+		onSuccess: () => silentReload(),
 		onError: ( err ) => {
 			console.error( 'Failed to reorder labels:', err );
 			loadLabels();

@@ -2,7 +2,7 @@
 
 Add customizable visual badge labels to WooCommerce product images: Sale, New, Hot, and more.
 
-> More free WooCommerce plugins at [limewoo.com](https://limewoo.com).
+> More WooCommerce plugins at [limewoo.com](https://limewoo.com).
 
 ## Requirements
 

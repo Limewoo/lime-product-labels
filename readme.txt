@@ -14,7 +14,7 @@ Add custom badge labels to WooCommerce product images. Highlight sales, new arri
 
 Lime Product Labels lets you attach eye-catching badges to your WooCommerce product images to highlight promotions, availability, and other key product attributes.
 
-> More free WooCommerce plugins at [limewoo.com](https://limewoo.com).
+> More WooCommerce plugins at [limewoo.com](https://limewoo.com).
 
 **Key features:**
 
