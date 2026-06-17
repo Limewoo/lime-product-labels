@@ -70,10 +70,12 @@ Yes. Go to **Lime Labels → Settings → Export & Import** to download all your
 == Screenshots ==
 
 1. Label list: manage all your product badges in one place.
-2. Label editor: design your badge with text or an image and configure targeting rules.
-3. Styles tab: choose automatic styling or configure colors, font size, padding, and more manually.
-4. Settings tab: export or import labels and manage plugin data.
-5. Storefront: badges displayed on product archive and single product images.
+2. Label editor for text shape: configure targeting rules, placement, shape, and styling.
+3. Label editor for image shape: upload a custom PNG, JPG, or SVG badge image.
+4. Styles tab: choose automatic styling or configure colors, font size, padding, and more manually.
+5. Settings tab: export or import labels and manage plugin data.
+6. Storefront archive: badges displayed on the shop and category pages.
+7. Storefront single product: badge displayed on the single product image.
 
 == Source Code ==
 

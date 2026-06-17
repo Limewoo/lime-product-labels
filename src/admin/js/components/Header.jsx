@@ -115,6 +115,10 @@ const Header = () => {
 		const isHome      = isLabelTab && ! labelMode;
 		const isLabelForm = isLabelTab && labelMode;
 
+		if ( activeTab === 'settings' ) {
+			return null;
+		}
+
 		return (
 			<>
 				{ isHome ? (
